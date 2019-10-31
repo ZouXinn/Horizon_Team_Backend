@@ -31,6 +31,10 @@ Value* AssignStmtAST::codegen()
 			Val = Builder.CreateAdd(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
 			Val = Builder.CreateStore(Val, a);
 			return Val;
+		case Op::MINUSMINUS:
+			Val = Builder.CreateLoad(a);
+			Val = Builder.CreateSub(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
+			Val = Builder.CreateStore(Val, a);
 		default:
 			break;
 		}
