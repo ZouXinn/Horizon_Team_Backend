@@ -1,6 +1,5 @@
 #include "MyParser.h"
 #include "../src/FromLexer/MyLexer.h"
-
 void testLexer()
 {
 	MyLexer* lexer = nullptr;
