@@ -7,6 +7,8 @@ std::map<std::string, AllocaInst*> NamedValues;
 map<string, int*> testMap;
 IRBuilder<> Builder(TheContext);
 
+std::unique_ptr<KaleidoscopeJIT> TheJIT;
+
 AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 	const std::string& VarName, zx::Type type) {
 	if (type == zx::Type::INT) {

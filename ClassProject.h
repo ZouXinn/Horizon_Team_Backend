@@ -52,7 +52,7 @@ extern std::unique_ptr<Module> TheModule;
 extern std::map<std::string, AllocaInst*> NamedValues;
 
 
-static std::unique_ptr<KaleidoscopeJIT> TheJIT;
+extern std::unique_ptr<KaleidoscopeJIT> TheJIT;
 
 extern AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 	const std::string& VarName, zx::Type type);
