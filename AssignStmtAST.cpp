@@ -26,7 +26,7 @@ Value* AssignStmtAST::codegen()
 		a = varNameAST->codegen();
 		switch (operatorAST->op)
 		{
-		case Op::PLUSPLUS://++
+		case Op::PLUSPLUS://++   ×ŞöÎ¼ÓÁËµã×¢ÊÍ
 			Val = Builder.CreateLoad(a);
 			Val = Builder.CreateAdd(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
 			Val = Builder.CreateStore(Val, a);
