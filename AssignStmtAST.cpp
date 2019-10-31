@@ -46,6 +46,14 @@ Value* AssignStmtAST::codegen()
 			Val->print(errs());
 			cout << "\n";
 		}
+		if (isa<IntegerType>(b->getType()) && (a->getType() == llvm::Type::getDoublePtrTy(TheContext))) {
+
+			b = Builder.CreateSIToFP(b, Type::getDoubleTy(TheContext));
+			Val = Builder.CreateStore(b, a);
+			Val->print(errs());
+			/*cout << "\nAlu\n";
+			a->getType()->getPointerTo()->print(errs());*/
+		}
 		return Val;
 		break;
 	default:

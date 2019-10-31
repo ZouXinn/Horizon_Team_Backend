@@ -202,6 +202,13 @@ Value* ExpAST::codegen() {
 		case Op::DIVIDE://如果两个都是int类型，也要转换吗？
 
 			BothIsInterger = true;
+			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
+				//可以加上第三个参数作为IR语句中的临时变量名
+				Val = Builder.CreateSDiv(LVar, RVar);
+				Val->print(errs());
+				cout << "\n";
+				return Val;
+			}
 
 			//这里似乎不用加判断也可生成正常IR代码
 			if (IntegerType::classof(LVar->getType())) {
