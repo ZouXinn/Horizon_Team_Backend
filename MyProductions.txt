@@ -1,0 +1,99 @@
+<start> @ <program>
+<program> @ <dec_exp> <program>
+<program> @ <func_define> <program>
+<program> @ <dec_exp>
+<program> @ <func_define>
+<dec_exp> @ <struct_dec>
+<dec_exp> @ <var_dec>
+<func_define> @ <type_specify> identifier ( <formal_para_list> ) { <stmts> }
+<type_specify> @ <direct_type_specify>
+<type_specify> @ <pointer_type_specify>
+<formal_para_list> @ <formal_para_item> , <formal_para_list>
+<formal_para_list> @ <formal_para_item>
+<formal_para_list> @ empty
+<formal_para_item> @ <type_specify> <dec_var_name>
+<direct_type_specify> @ void
+<direct_type_specify> @ int
+<direct_type_specify> @ real
+<direct_type_specify> @ char
+<direct_type_specify> @ struct identifier
+<pointer_type_specify> @ <direct_type_specify> <pointer>
+<pointer> @ *
+<pointer> @ * <pointer>
+<var_dec> @ <type_specify> <id_list> ;
+<id_list> @ <id_item> , <id_list>
+<id_list> @ <id_item>
+<id_item> @ <dec_var_name>
+<id_item> @ <dec_var_name> = <val>
+<id_item> @ <dec_var_name> = { <val_list> }
+<dec_var_name> @ identifier
+<dec_var_name> @ identifier [ ]
+<dec_var_name> @ identifier [ integer ]
+<val_list> @ <number_list>
+<val_list> @ <char_list>
+<number_list> @ <number> , <number_list>
+<number_list> @ <number>
+<char_list> @ Achar , <char_list>
+<char_list> @ Achar
+<struct_dec> @ struct identifier { <var_list> } ;
+<var_list> @ <single_var_dec> <var_list>
+<var_list> @ <single_var_dec>
+<single_var_dec> @ <type_specify> <dec_var_name> ;
+<single_var_dec> @ <type_specify> <dec_var_name> = <val> ;
+<val> @ <number>
+<val> @ string
+<val> @ Achar
+<var_name> @ identifier
+<var_name> @ <var_name> -> <var_name>
+<var_name> @ <var_name> . <var_name>
+<var_name> @ <var_name> [ integer ]
+<stmts> @ <stmt> <stmts>
+<stmts> @ empty
+<stmt> @ <assign_stmt>
+<stmt> @ <func_call_stmt> ;
+<stmt> @ <if_stmt>
+<stmt> @ <if_else_stmt>
+<stmt> @ <while_stmt>
+<stmt> @ <return_stmt>
+<stmt> @ <break_stmt>
+<stmt> @ <continue_stmt>
+<stmt> @ <var_dec>
+<if_stmt> @ if ( <exp> ) { <stmts> }
+<if_else_stmt> @ if ( <exp> ) { <stmts> } else { <stmts> }
+<while_stmt> @ while ( <exp> ) { <stmts> }
+<assign_stmt> @ <var_name> ++ ;
+<assign_stmt> @ <var_name> -- ;
+<assign_stmt> @ <var_name> = <exp> ;
+<assign_stmt> @ <var_name> = <func_call_stmt> ;
+<return_stmt> @ return ;
+<return_stmt> @ return <exp> ;
+<break_stmt> @ break ;
+<continue_stmt> @ continue ;
+<exp> @ <exp> + <exp>
+<exp> @ <exp> - <exp>
+<exp> @ <exp> * <exp>
+<exp> @ <exp> / <exp>
+<exp> @ <exp> % <exp>
+<exp> @ <exp> > <exp>
+<exp> @ <exp> < <exp>
+<exp> @ <exp> >= <exp>
+<exp> @ <exp> <= <exp>
+<exp> @ <exp> == <exp>
+<exp> @ <exp> <> <exp>
+<exp> @ <exp> && <exp>
+<exp> @ <exp> || <exp>
+<exp> @ ! <exp>
+<exp> @ * <exp>
+<exp> @ - <exp>
+<exp> @ ( <exp> )
+<exp> @ <var_name>
+<exp> @ <val>
+<func_call_stmt> @ identifier ( <real_para_list> )
+<real_para_list> @ <real_para_item> , <real_para_list>
+<real_para_list> @ <real_para_item>
+<real_para_list> @ empty
+<real_para_item> @ <var_name>
+<real_para_item> @ <val>
+<number> @ integer
+<number> @ real_number
+$
