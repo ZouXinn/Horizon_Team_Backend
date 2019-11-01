@@ -14,11 +14,11 @@ VarDecAST::~VarDecAST()
 	delete idListAST;
 }
 Value* VarDecAST::codegen() {
-	llvm::Type* a = typeSpecifyAST->codegenType();
-	map<string, Value*> b = idListAST->codegenMap();
+	llvm::Type* type = typeSpecifyAST->codegenType();
+	map<string, ID*> b = idListAST->codegenMap();
 	cout << "VarDecAST" << "\n";
 
-	map< string, Value* >::iterator iter;
+	map< string, ID* >::iterator iter;
 	iter = b.begin();
 	while (iter != b.end()) {
 
@@ -30,56 +30,80 @@ Value* VarDecAST::codegen() {
 		BasicBlock* BB = BasicBlock::Create(TheContext, "EntryBlock", VarDec);
 		Builder.SetInsertPoint(BB);*/
 
-		Value* d = iter->second;
-
+		ID* d = iter->second;
 		llvm::Type* e = NULL;
 
-		if (a->isIntegerTy()) {
+		if (type->isIntegerTy()) {//是整数
 			e = IntegerType::get(TheContext, 32);
 		}
-		if (a->isDoubleTy()) {
+		else if (type->isDoubleTy()) {//是real
 			e = llvm::Type::getDoubleTy(TheContext);
 		}
+		//else if()
 
-		if (ConstantInt::classof(iter->second)) {
-			d = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(iter->second)->getSExtValue()));
-			if (e->isDoubleTy()) {
-				d = Builder.CreateSIToFP(d, llvm::Type::getDoubleTy(TheContext));
+		if (d->isArray) {//是数组
+			llvm::ArrayType* arrType = nullptr;
+			llvm::Type* elementType = nullptr;
+			if (type->isIntegerTy()) {//是整数
+				elementType = IntegerType::get(TheContext, 32);
 			}
+			else if (type->isDoubleTy()) {//是real
+				elementType = llvm::Type::getDoubleTy(TheContext);
+			}
+			//else if()
 
+			int elementNum = d->elementNum;
+			arrType = ArrayType::get(elementType, elementNum);
+
+			
 		}
+		else {//不是数组
+			if (d->valueVector.size() == 0) {//没有为变量赋值
+				if (type->isIntegerTy()) {
 
-		if (ConstantFP::classof(iter->second)) {
-			d = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(iter->second)->getValueAPF()));
-			if (e->isIntegerTy()) {
-				d = Builder.CreateFPToSI(d, IntegerType::get(TheContext, 32));
+				}
+				else if (type->isDoubleTy()) {
+
+				}
+				//else if(type->is)
+			}
+			else {
+				Value* Val = (d->valueVector)[0];
+				if (ConstantInt::classof(Val)) {
+					Val = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(Val)->getSExtValue()));
+					if (e->isDoubleTy()) {
+						Val = Builder.CreateSIToFP(Val, llvm::Type::getDoubleTy(TheContext));
+					}
+
+				}
+				
+				if (ConstantFP::classof(Val)) {
+					Val = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(Val)->getValueAPF()));
+					if (e->isIntegerTy()) {
+						Val = Builder.CreateFPToSI(Val, IntegerType::get(TheContext, 32));
+					}
+				}
+
+				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
+				NamedValues[iter->first] = c;
+
+				if (AllocaInst::classof(Val)) {
+					Value* RVar = Builder.CreateLoad(Val);
+					RVar->print(errs());
+					cout << "\n";
+					Value* LVar = Builder.CreateStore(RVar, c);
+					LVar->print(errs());
+					cout << "\n";
+				}
+				else {
+					Value* g = Builder.CreateStore(Val, c);
+					/*Value* g = Builder.CreateStore(iter->second, c);*/
+					g->print(errs());
+					cout << "\n";
+				}
 			}
 		}
-
-
-
-		AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
-		NamedValues[iter->first] = c;
-
-		if (AllocaInst::classof(iter->second)) {
-			Value* RVar = Builder.CreateLoad(iter->second);
-			RVar->print(errs());
-			cout << "\n";
-			Value* LVar = Builder.CreateStore(RVar, c);
-			LVar->print(errs());
-			cout << "\n";
-		}
-		else {
-			Value* g = Builder.CreateStore(d, c);
-			/*Value* g = Builder.CreateStore(iter->second, c);*/
-			g->print(errs());
-			cout << "\n";
-
-		}
-
 		iter++;
 	}
-
-
 	return nullptr;
 }

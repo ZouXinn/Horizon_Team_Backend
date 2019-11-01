@@ -18,6 +18,7 @@ void testParser()
 	try {
 		MyParser* parser = new MyParser(sourceCodePath, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",true);
 		parser->Parse();
+		parser->CodeGen();
 	}
 	catch (Exception e)
 	{

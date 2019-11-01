@@ -14,5 +14,7 @@ public:
 	TypeSpecifyAST* retTypeSpecify = nullptr;
 	FuncCallStmtAST(IdentifierAST* identifier, RealParaListAST* realParaListAST);
 	virtual ~FuncCallStmtAST();
+
+	
 };
 

@@ -3,6 +3,20 @@
 #include "DecVarNameAST.h"
 #include "ExpListAST.h"
 
+
+struct ID {
+	bool isArray = false;
+	vector<Value*> valueVector;
+	int elementNum = 0;
+	ID(bool isArray, vector<Value*> valueVector) {
+		this->isArray = isArray;
+		this->valueVector = valueVector;
+	}
+	ID(bool isArray) {
+		this->isArray = isArray;
+	}
+};
+
 class IdItemAST:public AST
 {
 public:
@@ -19,6 +33,6 @@ public:
 	string codegenStr();
 	vector<string> codegenStrVec();
 	/*map<string, Value*>* codegenMap();*/
-	pair<string, Value*> codegenPair();
+	pair<string, ID*> codegenPair();
 };
 
