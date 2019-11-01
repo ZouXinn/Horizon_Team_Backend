@@ -15,6 +15,6 @@ public:
 	FuncCallStmtAST(IdentifierAST* identifier, RealParaListAST* realParaListAST);
 	virtual ~FuncCallStmtAST();
 
-	
+	Value* codegen();
 };
 

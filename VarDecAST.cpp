@@ -54,7 +54,6 @@ Value* VarDecAST::codegen() {
 
 			int elementNum = d->elementNum;
 			arrType = ArrayType::get(elementType, elementNum);
-
 			
 		}
 		else {//不是数组
