@@ -18,3 +18,14 @@ FuncCallStmtAST::~FuncCallStmtAST()
 		delete this->identifier;
 	}
 }
+
+Value* FuncCallStmtAST::codegen()
+{
+	string a = identifier->codegenStr();
+ 
+	std::vector<Type*> params;
+	Function* func = Function::Create(FunctionType::get((Type*)Type::getInt32Ty(TheContext), params, false), Function::ExternalLinkage, "fun0", TheModule.get());
+	Value* Val = Builder.CreateCall(func, ArrayRef<Value*>());
+
+	return nullptr;
+}
