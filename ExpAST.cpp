@@ -394,8 +394,27 @@ Value* ExpAST::codegen() {
 		return valAST->codegen();
 	case 3:
 		/*return NamedValues[varNameAST->codegenStr()];*/
-		allo = NamedValues[varNameAST->codegenStr()];
-		Val = Builder.CreateLoad(allo);
+		if (varNameAST->isArray) {//如果是数组
+			allo = NamedValues[varNameAST->codegenStr()];
+			Val = Builder.CreateLoad(allo);
+		}
+		else {
+			allo = NamedValues[varNameAST->codegenStr()];
+			Val = Builder.CreateLoad(allo);
+		}
+		
+
+
+		if (Val->getType()->isArrayTy()) {
+			if (Val->getType()->getArrayElementType()->isIntegerTy()) {//int[]
+				cout << 1;
+			}
+			else if (Val->getType()->getArrayElementType()->isDoubleTy()) {//real[]
+				cout << 2;
+			}
+			//else if()
+		}
+
 		Val->print(errs());
 		cout << "\n";
 		return Val;

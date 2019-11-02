@@ -77,6 +77,8 @@ string VarNameAST::codegenStr()
 	{
 	case 0:
 		return identifier->codegenStr();
+	case 1:
+		return left->identifier->codegenStr();
 	default:
 		break;
 	}
@@ -85,10 +87,25 @@ string VarNameAST::codegenStr()
 
 Value* VarNameAST::codegen()
 {
+	Value* expVal = nullptr;
+	Value* LVarVal = nullptr;
+	Value* RVarVal = nullptr;
+	AllocaInst* allo = nullptr;
 	switch (type)
 	{
 	case 0:
 		return NamedValues[identifier->codegenStr()];
+	case 1://var_name[exp]
+		expVal = exp->codegen();
+		allo = NamedValues[this->codegenStr()];
+
+		//allo.
+	case 2:
+
+	case 3:
+
+	case 4:
+
 	default:
 		break;
 	}
