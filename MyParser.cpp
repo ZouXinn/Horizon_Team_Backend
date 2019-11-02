@@ -4224,8 +4224,22 @@ void MyParser::Parse()
 #else
 	std::cout << "语法分析成功!" << endl;
 #endif
-	tree->codegen();
+	//tree->codegen();
+	this->root = tree;
 }
+void MyParser::CodeGen()
+{
+	if (root != nullptr) 
+	{
+		root->codegen();
+	}
+	else
+	{
+		throw Exception(OtherEx, 0, "请在CodeGen之前先进行语法分析!");
+	}
+}
+
+
 void MyParser::GoTo(AST*& ast, string value)
 {
 	Symbol* symbol = new Symbol();

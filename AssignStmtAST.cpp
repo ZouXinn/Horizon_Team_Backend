@@ -26,12 +26,12 @@ Value* AssignStmtAST::codegen()
 		a = varNameAST->codegen();
 		switch (operatorAST->op)
 		{
-		case Op::PLUSPLUS:
+		case Op::PLUSPLUS://++   ×ÞöÎ¼ÓÁËµã×¢ÊÍ
 			Val = Builder.CreateLoad(a);
 			Val = Builder.CreateAdd(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
 			Val = Builder.CreateStore(Val, a);
 			return Val;
-		case Op::MINUSMINUS:
+		case Op::MINUSMINUS://--
 			Val = Builder.CreateLoad(a);
 			Val = Builder.CreateSub(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
 			Val = Builder.CreateStore(Val, a);
