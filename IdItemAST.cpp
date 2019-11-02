@@ -56,8 +56,11 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 			pair.second = id;
 			return pair;
 		}
-		else {//未赋初值
-
+		else {//未赋初值,无法处理，因为不知道类型,留给VarDecAST处理
+			vector<Value*> valVector;
+			ID* id = new ID(false, valVector);
+			pair.second = id;
+			return pair;
 		}
 	}
 	else {//是数组
