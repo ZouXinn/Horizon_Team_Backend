@@ -69,26 +69,11 @@ Value* IfStmtAST::codegen()
 	}
 	else {//if(){}else{}
 		Value* CondV = expAST->codegen();
-		//Value* compare = ConstantFP::get(TheContext, APFloat(0.0));
-		if (!CondV)return nullptr;
-		//CondV = cast<ConstantFP>(CondV);
 
-		/*zx::Type type = expAST->expType;
-		if (type == zx::Type::INT) {
-			CondV = Builder.CreateFCmpONE((Constant*)CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");
-		}*/
-		//CondV = (ConstantInt*)CondV;
-		//CondV = cast<Value>(CondV);
-		//CondV = cast<ConstantFP*>(CondV);
+		if (!CondV)return nullptr;
 
 		CondV = Builder.CreateICmpNE((Constant*)CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");
 
-
-		/*	APInt a = ((ConstantInt*)CondV)->getValue();
-			int b = a.getSExtValue();
-			float c = (float)b;
-			Value* CondV2 = ConstantFP::get(TheContext, APFloat(c));
-			CondV2 = Builder.CreateFCmpONE(CondV2, ConstantFP::get(TheContext, APFloat(0.0)), "ifcond");*/
 
 		Function* TheFunciton = Builder.GetInsertBlock()->getParent();
 
@@ -113,16 +98,6 @@ Value* IfStmtAST::codegen()
 
 		TheFunciton->getBasicBlockList().push_back(MergeBB);
 		Builder.SetInsertPoint(MergeBB);
-
-
-		/*cout << "\n\nDeer.xl\n\n";
-		TheFunciton->print(errs());*/
-
-		/*PHINode* PN = Builder.CreatePHI(Type::getInt32Ty(TheContext), 2, "iftmp");
-		PN->addIncoming(ThenV, ThenBB);
-		PN->addIncoming(ElseV, ElseBB);
-		PN->print(errs());*/
-		/*return PN;*/
 
 		return ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
 

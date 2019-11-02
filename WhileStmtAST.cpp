@@ -21,9 +21,6 @@ WhileStmtAST::~WhileStmtAST()
 Value* WhileStmtAST::codegen()
 {
 	cout << "WhileStmtAST\n";
-	/*if (isa<ConstantInt>(expAST->codegen())) {
-		cout << "\nDeer.xl\n";
-	}*/
 
 	Value* Val;
 
@@ -44,22 +41,6 @@ Value* WhileStmtAST::codegen()
 	Builder.SetInsertPoint(LoopBB);
 	Value* c = stmtsAST->codegen();
 	Builder.CreateBr(ExpBB);
-
-	/*PHINode *Variable = Builder.CreatePHI(IntegerType::get(TheContext,32),2,Va)*/
-
-
-
-
-	/*PreheaderBB->print(errs());
-	cout << "\n";
-	ExpBB->print(errs());
-	cout << "\n";
-	LoopBB->print(errs());
-	cout << "\n";
-	AfterBB->print(errs());
-	cout << "\n";*/
-
-
 
 	Builder.SetInsertPoint(AfterBB);
 
