@@ -119,6 +119,7 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 
 		}
 		id->valueVector = valVector;
+		pair.second = id;
 		return pair;
 	}
 }

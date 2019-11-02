@@ -47,7 +47,7 @@ Value* VarDecAST::codegen() {
 
 			int elementNum = d->elementNum;
 			vector<llvm::Value*> valueVector = d->valueVector;//已经排好了顺序的
-			llvm::ArrayRef<llvm::Constant*> V;
+			llvm::ArrayRef<llvm::Constant*> V;// = llvm::ArrayRef<llvm::Constant*>;
 			if (type->isIntegerTy()) {//是整数
 				elementType = IntegerType::get(TheContext, 32);
 			}
@@ -58,58 +58,56 @@ Value* VarDecAST::codegen() {
 
 			//获得数组类型
 			arrType = ArrayType::get(elementType, elementNum);
+
 			//初值 start  -----> 获得 llvm::ArrayRef<llvm::Constant*> 类型
-			
-			
 
-			for (int i = 0; i < valueVector.size(); i++) {
-				Value* eleVal = valueVector[i];
-				if (ConstantInt::classof(eleVal)) {
-					eleVal = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(eleVal)->getSExtValue()));
-					if (e->isDoubleTy()) {
-						eleVal = Builder.CreateSIToFP(eleVal, llvm::Type::getDoubleTy(TheContext));
+			//是否赋初值？
+			vector<llvm::Constant*> constVector;
+			if (valueVector.empty()) {//如果没赋初值
+				for (int i = 0; i < elementNum; i++) {
+					Constant* defaultVal;
+					if (type->isIntegerTy()) {//如果是int
+						defaultVal = ConstantInt::get(TheContext, APInt(32, 0));
 					}
-				}
-				else if (ConstantFP::classof(eleVal)) {
-					eleVal = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(eleVal)->getValueAPF()));
-					if (e->isIntegerTy()) {
-						eleVal = Builder.CreateFPToSI(eleVal, IntegerType::get(TheContext, 32));
+					else if (type->isDoubleTy()) {//如果是real
+						defaultVal = ConstantFP::get(TheContext, APFloat(0.0));
 					}
-				}
-				//else if()
-
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
-				NamedValues[iter->first] = c;
-
-
-				if (AllocaInst::classof(eleVal)) {
-					Value* RVar = Builder.CreateLoad(eleVal);
-					RVar->print(errs());
-					cout << "\n";
-					Value* LVar = Builder.CreateStore(RVar, c);
-					LVar->print(errs());
-					cout << "\n";
-				}
-				else {
-					Value* g = Builder.CreateStore(eleVal, c);
-					/*Value* g = Builder.CreateStore(iter->second, c);*/
-					g->print(errs());
-					cout << "\n";
+					//else if()
+					constVector.push_back(defaultVal);
 				}
 			}
+			else {//如果赋了初值
+				for (int i = 0; i < valueVector.size(); i++) {
+					Value* eleVal = valueVector[i];
+					if (ConstantInt::classof(eleVal)) {
+						eleVal = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(eleVal)->getSExtValue()));
+						if (e->isDoubleTy()) {
+							eleVal = Builder.CreateSIToFP(eleVal, llvm::Type::getDoubleTy(TheContext));
+						}
 
-
+					}
+					else if (ConstantFP::classof(eleVal)) {
+						eleVal = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(eleVal)->getValueAPF()));
+						if (e->isIntegerTy()) {
+							eleVal = Builder.CreateFPToSI(eleVal, IntegerType::get(TheContext, 32));
+						}
+					}
+					//else if()
+					constVector.push_back((Constant*)eleVal);
+				}
+			}
+			
+			V = llvm::ArrayRef<llvm::Constant*>(constVector);
 			//初值 end
 
 			//llvm::Array
 			//llvm::ConstantArray::get(arrType,V);
-
-
+			Constant* arrConstant = llvm::ConstantArray::get(arrType, V);
 			//申请内存？
 			AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
 			NamedValues[iter->first] = c;
 			//在内存中装载相应的值
-
+			Value* g = Builder.CreateStore(arrConstant, c);
 		}
 		else {//不是数组
 			if (d->valueVector.size() == 0) {//没有为变量赋值
