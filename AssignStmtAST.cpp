@@ -16,40 +16,46 @@ AssignStmtAST::AssignStmtAST(VarNameAST* varNameAST, ExpAST* expAST)//type = 1
 }
 Value* AssignStmtAST::codegen()
 {
-	Value* a;
-	Value* b;
-	Value* Val;
-	Value* Val2;
+	Value* varNameVal = nullptr;
+	Value* expVal = nullptr;
+	Value* Val = nullptr;
+	Value* Val2 = nullptr;
 	switch (type)
 	{
 	case 0:
-		a = varNameAST->codegen();
+		varNameVal = varNameAST->codegen();
 		switch (operatorAST->op)
 		{
 		case Op::PLUSPLUS://++   邹鑫加了点注释
-			Val = Builder.CreateLoad(a);
+			Val = Builder.CreateLoad(varNameVal);
 			Val = Builder.CreateAdd(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
-			Val = Builder.CreateStore(Val, a);
+			Val = Builder.CreateStore(Val, varNameVal);
 			return Val;
 		case Op::MINUSMINUS://--
-			Val = Builder.CreateLoad(a);
+			Val = Builder.CreateLoad(varNameVal);
 			Val = Builder.CreateSub(Val, ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1)));
-			Val = Builder.CreateStore(Val, a);
+			Val = Builder.CreateStore(Val, varNameVal);
+			return Val;
 		default:
 			break;
 		}
 	case 1:
-		a = varNameAST->codegen();
-		b = expAST->codegen();
-		if (a->getType() == b->getType()->getPointerTo()) {
-			Val = Builder.CreateStore(b, a);
+		varNameVal = varNameAST->codegen();
+		expVal = expAST->codegen();
+		if (AllocaInst::classof(varNameVal)) {//varName是变量
+			
+		}
+
+
+		if (varNameVal->getType() == varNameVal->getType()->getPointerTo()) {
+			Val = Builder.CreateStore(expVal, varNameVal);
 			Val->print(errs());
 			cout << "\n";
 		}
-		if (isa<IntegerType>(b->getType()) && (a->getType() == llvm::Type::getDoublePtrTy(TheContext))) {
+		if (isa<IntegerType>(expVal->getType()) && (varNameVal->getType() == llvm::Type::getDoublePtrTy(TheContext))) {
 
-			b = Builder.CreateSIToFP(b, Type::getDoubleTy(TheContext));
-			Val = Builder.CreateStore(b, a);
+			expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+			Val = Builder.CreateStore(expVal, varNameVal);
 			Val->print(errs());
 			/*cout << "\nAlu\n";
 			a->getType()->getPointerTo()->print(errs());*/

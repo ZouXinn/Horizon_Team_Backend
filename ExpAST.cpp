@@ -394,11 +394,23 @@ Value* ExpAST::codegen() {
 		return valAST->codegen();
 	case 3:
 		/*return NamedValues[varNameAST->codegenStr()];*/
-		if (varNameAST->isArray) {//如果是数组
-			allo = NamedValues[varNameAST->codegenStr()];
-			Val = Builder.CreateLoad(allo);
+		if (varNameAST->type == 1) {//如果是数组的某个元素 --> 那么就返回一个AllocaInst* ， 需要修改上面的case1的吗？
+			/*allo = NamedValues[varNameAST->codegenStr()];
+			Val = Builder.CreateLoad*/(allo);
+			Val = varNameAST->codegen();
+
+
+
+
+			if (ArrayType::classof(Val->getType())) {
+
+			}
+			else {//wrong
+
+			}
+			Val->print(errs());
 		}
-		else {
+		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
 			allo = NamedValues[varNameAST->codegenStr()];
 			Val = Builder.CreateLoad(allo);
 		}

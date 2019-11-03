@@ -91,6 +91,7 @@ Value* VarNameAST::codegen()
 	Value* LVarVal = nullptr;
 	Value* RVarVal = nullptr;
 	AllocaInst* allo = nullptr;
+	Value* Val = nullptr;
 	switch (type)
 	{
 	case 0:
@@ -98,7 +99,12 @@ Value* VarNameAST::codegen()
 	case 1://var_name[exp]
 		expVal = exp->codegen();
 		allo = NamedValues[this->codegenStr()];
+		Val = Builder.CreateLoad(allo);
 
+
+
+
+		return Val;
 		//allo.
 	case 2:
 
@@ -108,6 +114,15 @@ Value* VarNameAST::codegen()
 
 	default:
 		break;
+	}
+	return nullptr;
+}
+
+Value* VarNameAST::expCodegen()
+{
+	if (this->exp != nullptr)
+	{
+		return exp->codegen();
 	}
 	return nullptr;
 }
