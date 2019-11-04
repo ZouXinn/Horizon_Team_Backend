@@ -145,6 +145,18 @@ Value* VarNameAST::codegen()
 	return nullptr;
 }
 
+vector<Value*> VarNameAST::codegenAlloAndExpValue() {//第一个是varName的allo，第二个是exp的
+	vector<Value*> ret;
+	if (type != 1) {
+		return ret;
+	}
+	else {
+		ret.push_back(NamedValues[this->codegenStr()]);
+		ret.push_back(intExp->codegen());
+		return ret;
+	}
+}
+
 Value* VarNameAST::expCodegen()
 {
 	if (this->exp != nullptr)

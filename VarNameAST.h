@@ -39,5 +39,6 @@ public:
 	Value* codegen();
 	string codegenStr();
 	Value* expCodegen();
+	vector<Value*> codegenAlloAndExpValue();
 };
 

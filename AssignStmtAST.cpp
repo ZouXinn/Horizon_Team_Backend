@@ -40,42 +40,86 @@ Value* AssignStmtAST::codegen()
 			return nullptr;
 		}
 	case 1:
-		varNameVal = varNameAST->codegen();
-		expVal = expAST->codegen();
-		//如果varName是 AllocaInst*,而expVal不是AllocaInst*，代表应该
-		//Val = Builder.CreateStore(expVal, varNameVal);
-		if (AllocaInst::classof(varNameVal) && !AllocaInst::classof(expVal)) {
-			//类型转换?
-			Val = Builder.CreateStore(expVal, varNameVal);
+		if (varNameAST->type == 1) {//varName[exp] = ...
+			vector<Value*> values = varNameAST->codegenAlloAndExpValue();
+			if (values.size() == 2) {//注意类型转换！！
+				Value* allo = values[0];
+				Value* intExpVal = values[1];
+				expVal = expAST->codegen();
+				Val = Builder.CreateLoad(allo);
+				//Val = Builder.CreateInsertElement(Val, expVal, intExpVal);
+				/*cout << endl;
+				Val->print(errs());
+				cout << endl;
+				expVal->print(errs());
+				cout << endl;
+				intExpVal->print(errs());
+				cout << endl;*/
+				
+
+				if (AllocaInst::classof(intExpVal)) {
+					intExpVal = Builder.CreateLoad(intExpVal);
+				}
+				if (AllocaInst::classof(expVal)) {
+					expVal = Builder.CreateLoad(expVal);
+				}
+				//类型转换
+				if (Val->getType()->isVectorTy() && Val->getType()->getVectorElementType()->isDoubleTy() && expVal->getType()->isIntegerTy()) {
+					expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+				}
+
+				Val = Builder.CreateInsertElement(Val, expVal, intExpVal);
+				//Val = Builder.CreateInsertElement(allo, expVal, intExpVal);
+				//store
+				Val = Builder.CreateStore(Val, allo);
+			}
+		}
+		else {
+			varNameVal = varNameAST->codegen();
+			expVal = expAST->codegen();
+			//如果varName是 AllocaInst*,而expVal不是AllocaInst*，代表应该
+			//Val = Builder.CreateStore(expVal, varNameVal);
+			if (AllocaInst::classof(varNameVal) && !AllocaInst::classof(expVal)) {
+				//类型转换?
+				if (((AllocaInst*)varNameVal)->getAllocatedType()->isDoubleTy() && expVal->getType()->isIntegerTy()) {
+					expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+				}
+				Val = Builder.CreateStore(expVal, varNameVal);
+
+			}
+
+			//如果varName是 AllocaInst*,而expVal也是AllocaInst*，代表应该
+			//Value* tempVal = Builder.CreateLoad(expVal);
+			//Val = Builder.CreateStore(tempVal, varNameVal);
+			else if (AllocaInst::classof(varNameVal) && AllocaInst::classof(expVal)) {
+				Value* tempVal = Builder.CreateLoad(expVal);
+				if (((AllocaInst*)varNameVal)->getAllocatedType()->isDoubleTy() && tempVal->getType()->isIntegerTy()) {
+					tempVal = Builder.CreateSIToFP(tempVal, Type::getDoubleTy(TheContext));
+				}
+				//类型转换?
+				Val = Builder.CreateStore(tempVal, varNameVal);
+			}
+
+
+
+
+
+
+			//if (varNameVal->getType() == varNameVal->getType()->getPointerTo()) {
+			//	Val = Builder.CreateStore(expVal, varNameVal);
+			//	Val->print(errs());
+			//	cout << "\n";
+			//}
+			//if (isa<IntegerType>(expVal->getType()) && (varNameVal->getType() == llvm::Type::getDoublePtrTy(TheContext))) {
+
+			//	expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+			//	Val = Builder.CreateStore(expVal, varNameVal);
+			//	Val->print(errs());
+			//	/*cout << "\nAlu\n";
+			//	a->getType()->getPointerTo()->print(errs());*/
+			//}
 		}
 		
-		//如果varName是 AllocaInst*,而expVal也是AllocaInst*，代表应该
-		//Value* tempVal = Builder.CreateLoad(expVal);
-		//Val = Builder.CreateStore(tempVal, varNameVal);
-		if (AllocaInst::classof(varNameVal) && AllocaInst::classof(expVal)) {
-			Value* tempVal = Builder.CreateLoad(expVal);
-			//类型转换?
-			Val = Builder.CreateStore(tempVal, varNameVal);
-		}
-
-		
-		
-
-
-
-		//if (varNameVal->getType() == varNameVal->getType()->getPointerTo()) {
-		//	Val = Builder.CreateStore(expVal, varNameVal);
-		//	Val->print(errs());
-		//	cout << "\n";
-		//}
-		//if (isa<IntegerType>(expVal->getType()) && (varNameVal->getType() == llvm::Type::getDoublePtrTy(TheContext))) {
-
-		//	expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
-		//	Val = Builder.CreateStore(expVal, varNameVal);
-		//	Val->print(errs());
-		//	/*cout << "\nAlu\n";
-		//	a->getType()->getPointerTo()->print(errs());*/
-		//}
 		return Val;
 	default:
 		break;
