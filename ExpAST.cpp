@@ -83,11 +83,11 @@ ExpAST::~ExpAST()
 }
 
 Value* ExpAST::codegen() {
-	Value* LVar;
-	Value* RVar;
-	Value* Val;
-	AllocaInst* allo;
-	ConstantFP* LVarV;
+	Value* LVar = nullptr;
+	Value* RVar = nullptr;
+	Value* Val = nullptr;
+	AllocaInst* allo = nullptr;
+	ConstantFP* LVarV = nullptr;
 	bool BothIsInterger;
 	if (left != NULL) {
 		LVar = left->codegen();
@@ -122,7 +122,7 @@ Value* ExpAST::codegen() {
 			break;
 		}
 		break;
-	case 1:
+	case 1://双目运算符
 		switch (operatorAST->op)
 		{
 		case Op::ADD:
@@ -390,9 +390,9 @@ Value* ExpAST::codegen() {
 			break;
 		}
 		break;
-	case 2:
+	case 2://Val
 		return valAST->codegen();
-	case 3:
+	case 3://varName
 		/*return NamedValues[varNameAST->codegenStr()];*/
 		if (varNameAST->type == 1) {//如果是数组的某个元素 --> 那么就返回一个AllocaInst* ， 需要修改上面的case1的吗？
 			/*allo = NamedValues[varNameAST->codegenStr()];
@@ -412,7 +412,14 @@ Value* ExpAST::codegen() {
 		}
 		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
 			allo = NamedValues[varNameAST->codegenStr()];
-			Val = Builder.CreateLoad(allo);
+			//Val = Builder.CreateLoad(allo);
+
+
+			//return Val;
+			return allo;
+		}
+		else if (varNameAST->type == 4) {// varName -> * exp   , 则可能是在左部
+
 		}
 		
 

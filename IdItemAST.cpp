@@ -70,7 +70,8 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 			if (this->exps != nullptr) {
 				for (int i = this->exps->exps->size() - 1; i >= 0; i--) {
 					ExpAST* exp = this->exps->exps->at(i);
-					valVector.push_back(exp->codegen());
+					Value* tVal = exp->codegen();
+					valVector.push_back(tVal);
 					
 				}
 				id->elementNum = this->exps->exps->size();

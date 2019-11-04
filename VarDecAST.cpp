@@ -59,6 +59,9 @@ Value* VarDecAST::codegen() {
 			//获得数组类型
 			arrType = ArrayType::get(elementType, elementNum);
 
+
+			VectorType* vectorType = VectorType::get(elementType, elementNum);
+			
 			//初值 start  -----> 获得 llvm::ArrayRef<llvm::Constant*> 类型
 
 			//是否赋初值？
@@ -102,12 +105,20 @@ Value* VarDecAST::codegen() {
 
 			//llvm::Array
 			//llvm::ConstantArray::get(arrType,V);
-			Constant* arrConstant = llvm::ConstantArray::get(arrType, V);
+
+			//Constant* arrConstant = llvm::ConstantArray::get(arrType, V);
+
+
+			Constant* constantVector = llvm::ConstantVector::get(V);
+			
 			//申请内存？
-			AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
+			//AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
+			AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, vectorType);
+
 			NamedValues[iter->first] = c;
 			//在内存中装载相应的值
-			Value* g = Builder.CreateStore(arrConstant, c);
+			//Value* g = Builder.CreateStore(arrConstant, c);
+			Value* g = Builder.CreateStore(constantVector, c);
 		}
 		else {//不是数组
 			if (d->valueVector.size() == 0) {//没有为变量赋值

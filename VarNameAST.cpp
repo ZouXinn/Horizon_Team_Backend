@@ -92,19 +92,46 @@ Value* VarNameAST::codegen()
 	Value* RVarVal = nullptr;
 	AllocaInst* allo = nullptr;
 	Value* Val = nullptr;
+	vector<unsigned int> zeroV;
+	ArrayRef<unsigned int> idx;
 	switch (type)
 	{
 	case 0:
-		return NamedValues[identifier->codegenStr()];
-	case 1://var_name[exp]
-		expVal = exp->codegen();
-		allo = NamedValues[this->codegenStr()];
+		return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
+	case 1://varName[exp]
+		expVal = intExp->codegen();
+		if (AllocaInst::classof(expVal)) {
+			expVal = Builder.CreateLoad(expVal);
+		}
+		allo = NamedValues[this->codegenStr()]; // allo是varName的内存空间，需要找到按下标访问的方法
+		//或者不用allo,用load之后的allo?
+		
+		/*
+		//CreateExtractValue
+		zeroV.push_back(0);
+		idx = ArrayRef<unsigned int>(zeroV);
+
 		Val = Builder.CreateLoad(allo);
+		//通过按下标访问的方法访问
+		Val = Builder.CreateExtractValue(Val , idx);
+		//end
+		*/
+
+		//Builder.CreateInsertValue()
+		//Builder.CreateExtractValue()
+
+		//CreateExtractElement
+		Val = Builder.CreateLoad(allo);
+		Val = Builder.CreateExtractElement(Val, expVal);
+
+		//end
 
 
-
-
-		return Val;
+		//Builder.CreateExtractValue()
+		//Builder.CreateExtractElement()
+		//Val = Builder.CreateExtractValue(allo, idx);
+		//Val = Builder.CreateLoad(allo);
+		return Val;//是否也该返回AllocaInst*类型？
 		//allo.
 	case 2:
 

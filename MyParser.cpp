@@ -174,6 +174,75 @@ void MyParser::readpro2index(const char* proFileName)
 
 MyParser::~MyParser()
 {
+	/*
+	if (SLR1_table != nullptr) {
+		delete SLR1_table;
+		SLR1_table = nullptr;
+	}
+	if (symStack != nullptr) {
+		for (int i = 0; i < symStack->size(); i++) {
+			AST* tSym = symStack->at(i);
+			if (tSym != nullptr) {
+				delete tSym;
+			}
+		}
+		delete symStack;
+		symStack = nullptr;
+	}
+	if (sourceSymList != nullptr) {
+		for (int i = 0; i < sourceSymList->size(); i++) {
+			Symbol* symbol = sourceSymList->at(i);
+			if (symbol != nullptr) {
+				delete symbol;
+			}
+		}
+		delete sourceSymList;
+		sourceSymList = nullptr;
+	}
+	if (pro2index != nullptr) {
+		delete pro2index;
+		pro2index = nullptr;
+	}
+	if (productions != nullptr) {
+		for (int i = 0; i < productions->size(); i++) {
+			Production* pro = productions->at(i);
+			if (pro != nullptr) {
+				delete pro;
+			}
+		}
+		delete productions;
+		productions = nullptr;
+	}
+	if (token2strP != nullptr) {
+		delete token2strP;
+		token2strP = nullptr;
+	}
+	if (definedStructs != nullptr) {
+		delete definedStructs;
+		definedStructs = nullptr;
+	}
+	if (definedFuncs != nullptr) {
+		delete definedFuncs;
+		definedFuncs = nullptr;
+	}
+	if (var_table != nullptr) {
+		map<VarIndex, Variable*>::iterator iter;
+		for (iter = var_table->begin(); iter != var_table->end(); iter++) {
+			if (iter->second != nullptr) {
+				delete iter->second;
+			}
+		}
+		delete var_table;
+		var_table = nullptr;
+	}
+	if (usedStructName != nullptr) {
+		delete usedStructName;
+		usedStructName = nullptr;
+	}
+	if (root != nullptr) {
+		delete root;
+		root = nullptr;
+	}*/
 }
 void MyParser::push(AST* ast, int state)
 {
