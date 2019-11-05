@@ -396,10 +396,10 @@ Value* ExpAST::codegen() {
 		/*return NamedValues[varNameAST->codegenStr()];*/
 		if (varNameAST->type == 1) {//如果是数组的某个元素 --> 那么就返回一个AllocaInst* ， 需要修改上面的case1的吗？
 			/*allo = NamedValues[varNameAST->codegenStr()];
-			Val = Builder.CreateLoad*/(allo);
+			Val = Builder.CreateLoad(allo);*/
 			Val = varNameAST->codegen();
 
-
+			 
 
 
 			if (ArrayType::classof(Val->getType())) {

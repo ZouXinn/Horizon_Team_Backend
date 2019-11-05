@@ -7,6 +7,8 @@
 struct ID {
 	bool isArray = false;
 	vector<Value*> valueVector;
+	vector<Value*> notConstantVector;
+	vector<int> notConstantIndex;
 	int elementNum = 0;
 	ID(bool isArray, vector<Value*> valueVector) {
 		this->isArray = isArray;

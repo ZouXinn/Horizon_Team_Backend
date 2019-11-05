@@ -65,13 +65,41 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 	}
 	else {//是数组
 		vector<Value*> valVector;
+		vector<Value*> nConstVector;
+		vector<int> indexVector;
 		ID* id = new ID(true);
 		if (decVarNameAST->intAST == nullptr) {//如果没有显式指定长度
 			if (this->exps != nullptr) {
 				for (int i = this->exps->exps->size() - 1; i >= 0; i--) {
 					ExpAST* exp = this->exps->exps->at(i);
 					Value* tVal = exp->codegen();
-					valVector.push_back(tVal);
+					if (Constant::classof(tVal)) {//是常量
+						valVector.push_back(tVal);
+					}
+					else {//不是常量
+						indexVector.push_back(valVector.size());
+						nConstVector.push_back(tVal);
+						if (this->exps->expType == zx::Type::INT) {
+							valVector.push_back(ConstantInt::get(TheContext, APInt(32, 0)));
+						}
+						else if (this->exps->expType == zx::Type::REAL) {
+							valVector.push_back(ConstantFP::get(TheContext, APFloat(0.0)));
+						}
+						else if (this->exps->expType == zx::Type::STRING) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::POINTER) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::STRUCT) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::CHAR) {//有待解决
+							/*for (int i = 0; i < rest; i++) {
+								valVector.push_back(ConstantFP::get(TheContext, AP);
+							}*/
+						}
+					}
 					
 				}
 				id->elementNum = this->exps->exps->size();
@@ -86,7 +114,34 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 			if (this->exps != nullptr) {//如果赋了初值 则把没补满的补满
 				for (int i = this->exps->exps->size() - 1; i >= 0; i--) {
 					ExpAST* exp = this->exps->exps->at(i);
-					valVector.push_back(exp->codegen());
+					Value* tVal = exp->codegen();
+					if (Constant::classof(tVal)) {
+						valVector.push_back(tVal);
+					}
+					else {
+						indexVector.push_back(valVector.size());
+						nConstVector.push_back(tVal);
+						if (this->exps->expType == zx::Type::INT) {
+							valVector.push_back(ConstantInt::get(TheContext, APInt(32, 0)));
+						}
+						else if (this->exps->expType == zx::Type::REAL) {
+							valVector.push_back(ConstantFP::get(TheContext, APFloat(0.0)));
+						}
+						else if (this->exps->expType == zx::Type::STRING) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::POINTER) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::STRUCT) {//有待解决
+
+						}
+						else if (this->exps->expType == zx::Type::CHAR) {//有待解决
+							/*for (int i = 0; i < rest; i++) {
+								valVector.push_back(ConstantFP::get(TheContext, AP);
+							}*/
+						}
+					}
 				}
 				int rest = arrayLength - this->exps->exps->size();
 				if (this->exps->expType == zx::Type::INT) {
@@ -114,12 +169,13 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 					}*/
 				}
 			}
-			else {//如果没有赋初值   全部自己赋初值
-
-			}
-
+			//else {//如果没有赋初值   全部自己赋初值,这要留到上一级处理
+			//	//nothing to do
+			//}
 		}
 		id->valueVector = valVector;
+		id->notConstantIndex = indexVector;
+		id->notConstantVector = nConstVector;
 		pair.second = id;
 		return pair;
 	}
