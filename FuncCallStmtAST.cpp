@@ -31,6 +31,8 @@ Value* FuncCallStmtAST::codegen()
 
 	//zx start
 	string funcName = identifier->codegenStr();
+	Function* func = nullptr;
+	Value* Val = nullptr;
 	if (funcName == "read" || funcName == "write") {
 
 	}
@@ -38,7 +40,7 @@ Value* FuncCallStmtAST::codegen()
 		Function* func = TheModule->getFunction(funcName);
 		//ArrayRef<Value*> rparams = this->realParaListAST->codegenArr();
 		vector<Value*> rparamsVec = this->realParaListAST->codegenVec();
-		Value* Val = Builder.CreateCall(func, rparamsVec, "calltmp");
+		Val = Builder.CreateCall(func, rparamsVec, "calltmp");
 	}
-	return nullptr;
+	return Val;
 }
