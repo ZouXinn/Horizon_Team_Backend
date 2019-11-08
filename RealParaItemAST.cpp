@@ -17,9 +17,9 @@ RealParaItemAST::~RealParaItemAST()
 
 Value* RealParaItemAST::codegen() {
 	Value* val = expAST->codegen();
-	if (AllocaInst::classof(val)) {
+	/*if (AllocaInst::classof(val)) {
 		val = Builder.CreateLoad(val);
-	}
+	}*/
 	return val;
 }
 
