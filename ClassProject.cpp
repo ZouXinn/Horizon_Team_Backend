@@ -76,4 +76,24 @@ BasicBlock* updateBB()
 }
 
 
+#ifdef _WIN32
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+///read
+extern "C" DLLEXPORT void readInt(int &i) {
+	fscanf(stdin, "%d", &i);//是否需要取消& ？
+}
+extern "C" DLLEXPORT void readDouble(double d) {
+	fscanf(stdin, "%f", &d);
+}
+
+///write
+extern "C" DLLEXPORT void writeInt(int i) {
+	fprintf(stdout, "%d\n", i);
+}
+extern "C" DLLEXPORT void writeDouble(double d) {
+	fprintf(stdout, "%f\n", d);
+}
 

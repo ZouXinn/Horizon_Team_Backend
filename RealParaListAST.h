@@ -13,5 +13,8 @@ public:
 
 	void addRealParaListAST(RealParaItemAST* ast);
 
+
+	ArrayRef<Value*> codegenArr();
+	vector<Value*> codegenVec();
 };
 
