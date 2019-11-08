@@ -1,0 +1,54 @@
+<start>        		int  real char void identifier struct 
+<program> 		int  real char void identifier struct 
+<dec_exp>		int  real char void identifier struct 
+<func_define>		int  real char void identifier
+<type_specify>		int  real char void identifier
+<formal_para_list>		int  real char void identifier empty
+<formal_para_item>	int  real char void identifier
+<direct_type_specify>	int  real char void identifier
+<pointer_type_specify>	int  real char void identifier
+<pointer>		*
+<var_dec>		int  real char void identifier
+<id_list>			identifier
+<id_item>		identifier
+<dec_var_name>		identifier
+<val_list>			Achar integer real_number
+<number_list>		integer real_number
+<char_list>		Achar
+<struct_dec>		struct 
+<var_list>			int  real char void identifier
+<single_var_dec>		int  real char void identifier
+<val>			Achar integer real_number string
+<var_name>		identifier
+<stmts>			break char continue empty identifier if int real return void while
+<stmt>			break char continue identifier if int real return void while
+<if_stmt>			if
+<if_else_stmt>		if
+<while_stmt>		while
+<assign_stmt>		identifier
+<return_stmt>                 	return
+<break_stmt>                  	break
+<continue_stmt>		continue
+<exp>			! ( * - Achar identifier integer real_number string
+<func_call_stmt>		identifier
+<real_para_list>		Achar integer real_number string empty identifier
+<real_para_item>		Achar integer real_number string identifier
+<number>		integer real_number
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

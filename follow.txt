@@ -1,0 +1,41 @@
+<start>               		$
+<program>        		$
+<dec_exp>          		int  real char void identifier struct $
+<func_define>		int  real char void identifier struct $
+<type_specify>		identifier 
+<formal_para_list>		)
+<formal_para_item>	, )
+<direct_type_specify>	identifier *
+<pointer_type_specify>	identifier 
+<pointer>		identifier 
+<var_dec>		int  real char void identifier struct $  } break continue if return while
+<id_list>			;
+<id_item>		, ;
+<dec_var_name>		, ) ; =
+<val_list>			}
+<number_list>		}
+<char_list>		}
+<struct_dec>		int  real char void identifier struct $
+<var_list>			}
+<single_var_dec>		} int  real char void identifier
+<val>			; , )  + - * / % > < >= <= == <> && ||
+<var_name>		-> . [ ++ -- =  ) , ; + - * / % > < >= <= == <> && ||
+<stmts>			}
+<stmt>			} break char continue identifier if int real return void while
+<if_stmt>			} break char continue identifier if int real return void while
+<if_else_stmt>		} break char continue identifier if int real return void while
+<while_stmt>		} break char continue identifier if int real return void while
+<assign_stmt>		} break char continue identifier if int real return void while
+<return_stmt>                 	} break char continue identifier if int real return void while
+<break_stmt>                  	} break char continue identifier if int real return void while
+<continue_stmt>		} break char continue identifier if int real return void while
+<exp>			) ; + - * / % > < >= <= == <> && ||
+<func_call_stmt>		} break char continue identifier if int real return void while ;
+<real_para_list>		)
+<real_para_item>		, )
+<number>		, } ;  )  + - * / % > < >= <= == <> && ||
+
+
+
+
+

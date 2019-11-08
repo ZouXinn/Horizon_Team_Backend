@@ -1,0 +1,33 @@
+int nA = -10;
+real nB = -10.4,nC = -0.1;
+/* asiodas nodas**/
+//saNLD ANSD
+struct A{
+	int kk = 10;
+	real b;
+};
+void func(int a)
+{
+	a.b = c;
+	int a[] = {1,2,3};
+	struct ada a = 1.6;
+	a->c = 1;
+	int *** a;
+	struct A* b;
+	struct A a;
+	a.kk = 1;
+	a[0] = 15;
+	asda = (a[0]+b.c);
+	if(a&&b||c)
+	{
+		a = 1;
+	}
+	while(1)
+	{
+		break;
+	}
+	abc();
+	c = func();
+	return (a+b);
+}
+$
