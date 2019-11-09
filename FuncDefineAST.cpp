@@ -64,8 +64,11 @@ Value* FuncDefineAST::codegen() {
 	if (type->isDoubleTy()) {
 		FT = FunctionType::get(Type::getDoubleTy(TheContext), params, false);
 	}
-	if (type->isIntegerTy()) {
+	else if (type->isIntegerTy()) {
 		FT = FunctionType::get((Type*)Type::getInt32Ty(TheContext), params, false);
+	}
+	else if (type->isVoidTy()) {
+		FT = FunctionType::get((Type*)Type::getVoidTy(TheContext), params, false);
 	}
 
 	currentFun = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
