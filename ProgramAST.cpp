@@ -47,3 +47,24 @@ Value* ProgramAST::codegen() {
 	}
 	return nullptr;
 }
+
+void ProgramAST::RunJIT()
+{
+	// JIT the module containing the anonymous expression, keeping a handle so
+	  // we can free it later.
+	auto H = TheJIT->addModule(std::move(TheModule));
+	InitializeModuleAndPassManager();
+
+	// Search the JIT for the __anon_expr symbol.
+	auto ExprSymbol = TheJIT->findSymbol("main");
+	assert(ExprSymbol && "Î´ÕÒµ½mainº¯Êý");
+
+	// Get the symbol's address and cast it to the right type (takes no
+	// arguments, returns a double) so we can call it as a native function.
+
+    double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
+	fprintf(stderr, "Evaluated to %f\n", FP());
+
+	// Delete the anonymous expression module from the JIT.
+	TheJIT->removeModule(H);
+}

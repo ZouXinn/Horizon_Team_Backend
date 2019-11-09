@@ -1,6 +1,5 @@
 #include "MyParser.h"
 #include "../src/FromLexer/MyLexer.h"
-#include "addJIT/addJIT.h"
 void testLexer()
 {
 	MyLexer* lexer = nullptr;
@@ -20,8 +19,7 @@ void testParser()
 		MyParser* parser = new MyParser(sourceCodePath, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",true);
 		parser->Parse();
 		parser->CodeGen();
-		addJIT();
-
+		parser->RunJIT();
 	}
 	catch (Exception e)
 	{

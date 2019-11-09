@@ -4324,7 +4324,15 @@ void MyParser::CodeGen()
 	}
 }
 
-
+void MyParser::RunJIT()
+{
+	if (root != nullptr) {
+		((ProgramAST*)root)->RunJIT();
+	}
+	else {
+		throw Exception(DynamicSemaEx, -1, "root为nullptr，无法调用RunJIT函数");
+	}
+}
 void MyParser::GoTo(AST*& ast, string value)
 {
 	Symbol* symbol = new Symbol();
