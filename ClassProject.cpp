@@ -41,9 +41,21 @@ BasicBlock* BB = nullptr;
 
 std::unique_ptr<legacy::FunctionPassManager> TheFPM;
 
+void initOthers() {
+	InitializeNativeTarget();
+	InitializeNativeTargetAsmPrinter();
+	InitializeNativeTargetAsmParser();
+	TheJIT = std::make_unique<KaleidoscopeJIT>();
+}
+
 void InitializeModuleAndPassManager(void) {
+
 	// Open a new module.
 	TheModule = std::make_unique<Module>("my cool jit", TheContext);
+
+	//set layout
+	TheModule->setDataLayout(TheJIT->getTargetMachine().createDataLayout());
+
 
 	// Create a new pass manager attached to it.
 	TheFPM = std::make_unique<legacy::FunctionPassManager>(TheModule.get());
@@ -80,13 +92,14 @@ void InitializeModuleAndPassManager(void) {
 	Function::Create(writeDoubleFT, Function::ExternalLinkage, "writeDouble", TheModule.get());
 
 	//
+	
 
 }
 
 
 BasicBlock* updateBB()
 {
-
+	initOthers();
 	/*InitializeModule();*/
 	InitializeModuleAndPassManager();
 
