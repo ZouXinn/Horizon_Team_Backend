@@ -85,8 +85,8 @@ Value* FuncDefineAST::codegen() {
 	/*BasicBlock* BB = BasicBlock::Create(TheContext, "entry", currentFun);*/
 	Builder.SetInsertPoint(BB);
 
-
-	if (Value* RetVal = stmtsAST->codegen()) {
+	//liu start
+	/*if (Value* RetVal = stmtsAST->codegen()) {
 
 		Builder.CreateRet(RetVal);
 
@@ -96,7 +96,20 @@ Value* FuncDefineAST::codegen() {
 		currentFun->print(errs());
 		currentFun = NULL;
 		return nullptr;
-	}
+	}*/
+	//liu end
+
+	//zx start
+	stmtsAST->codegen();
+	currentFun = Builder.GetInsertBlock()->getParent();
+
+	verifyFunction(*currentFun);
+	currentFun->print(errs());
+	currentFun = NULL;
+	return nullptr;
+
+	//zx end
+
 
 	//// Error reading body, remove function.
 	currentFun->eraseFromParent();

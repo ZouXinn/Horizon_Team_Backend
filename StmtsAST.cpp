@@ -38,7 +38,7 @@ Value* StmtsAST::codegen()
 	}
 
 	return ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
-	return nullptr;
+	//return nullptr;
 
 
 	//
