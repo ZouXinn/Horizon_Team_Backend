@@ -4060,99 +4060,54 @@ void MyParser::Parse()
 				//静态语义检查 start
 #ifdef STATIC
 				string funcName = id->identifier;
-				if (definedFuncs->count(funcName) == 1)
-				{
-					bool find = false;
-					for (int i = 0; i < (*definedFuncs)[funcName].size(); i++)
-					{
-						if (find)
-						{
-							break;
+				if (funcName == "write" || funcName == "read") {
+					if (rparaList != nullptr && rparaList->realParaItemASTs != nullptr && rparaList->realParaItemASTs->size() == 1){
+						if (funcName == "read") {
+							RealParaItemAST* item = rparaList->realParaItemASTs->at(0);
+							ExpAST* exp = item->expAST;
+							if (exp->type != 3) {
+								throw Exception(StaticSemaEx, id->row, "read函数的参数必须是一个变量");
+							}
 						}
-						FuncDefineAST* func = (*definedFuncs)[funcName][i];
-						if (rparaList->realParaItemASTs->size() == func->formalParaListAST->formalParaItemASTs->size())
+					}
+					else {
+						throw Exception(StaticSemaEx, id->row, "read和write函数必须有且只有一个参数");
+					}
+				}
+				else {
+					if (definedFuncs->count(funcName) == 1)
+					{
+						bool find = false;
+						for (int i = 0; i < (*definedFuncs)[funcName].size(); i++)
 						{
-							if (rparaList->realParaItemASTs->size() == 0)
+							if (find)
 							{
-								find = true;
-								funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
 								break;
 							}
-							for (int j = 0; j < rparaList->realParaItemASTs->size(); j++)
+							FuncDefineAST* func = (*definedFuncs)[funcName][i];
+							if (rparaList->realParaItemASTs->size() == func->formalParaListAST->formalParaItemASTs->size())
 							{
-								FormalParaItemAST* fParaItem = func->formalParaListAST->formalParaItemASTs->at(j);
-								RealParaItemAST* rParaItem = rparaList->realParaItemASTs->at(j);
-								ExpAST* exp = rParaItem->expAST;
-								if (fParaItem->typeSpecifyAST->son == 0)
+								if (rparaList->realParaItemASTs->size() == 0)
 								{
-									if (exp->expType != zx::Type::POINTER)
-									{
-										DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
-										if (exp->expType == dtypeSpecify->type->type)
-										{
-											if (exp->expType == zx::Type::STRUCT)
-											{
-												if (exp->structName == dtypeSpecify->structNameIdentifier->identifier)
-												{
-													if (j == rparaList->realParaItemASTs->size() - 1)
-													{
-														find = true;
-														funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
-														break;
-													}
-													continue;
-												}
-												else
-												{
-													break;
-												}
-											}
-											else
-											{
-												if (j == rparaList->realParaItemASTs->size() - 1)
-												{
-													find = true;
-													funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
-													break;
-												}
-												continue;
-											}
-										}
-										else
-										{
-											if (dtypeSpecify->type->type == zx::Type::REAL && exp->expType == zx::Type::INT)
-											{
-												if (j == rparaList->realParaItemASTs->size() - 1)
-												{
-													find = true;
-													funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
-													break;
-												}
-												continue;
-											}
-											else 
-											{
-												break;
-											}
-										}
-									}
-									else
-									{
-										break;
-									}
+									find = true;
+									funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
+									break;
 								}
-								else//指针类型
+								for (int j = 0; j < rparaList->realParaItemASTs->size(); j++)
 								{
-									PointerTypeSpecifyAST* pointerTypeSpecify = (PointerTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
-									if (exp->expType == zx::Type::POINTER)
+									FormalParaItemAST* fParaItem = func->formalParaListAST->formalParaItemASTs->at(j);
+									RealParaItemAST* rParaItem = rparaList->realParaItemASTs->at(j);
+									ExpAST* exp = rParaItem->expAST;
+									if (fParaItem->typeSpecifyAST->son == 0)
 									{
-										if (exp->pointerNum == pointerTypeSpecify->pointerAST->starNum)
+										if (exp->expType != zx::Type::POINTER)
 										{
-											if (exp->finalToType == pointerTypeSpecify->directTypeSpecifyAST->type->type)
+											DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+											if (exp->expType == dtypeSpecify->type->type)
 											{
 												if (exp->expType == zx::Type::STRUCT)
 												{
-													if (exp->structName == pointerTypeSpecify->directTypeSpecifyAST->structNameIdentifier->identifier)
+													if (exp->structName == dtypeSpecify->structNameIdentifier->identifier)
 													{
 														if (j == rparaList->realParaItemASTs->size() - 1)
 														{
@@ -4180,12 +4135,20 @@ void MyParser::Parse()
 											}
 											else
 											{
-												if (j == rparaList->realParaItemASTs->size() - 1)
+												if (dtypeSpecify->type->type == zx::Type::REAL && exp->expType == zx::Type::INT)
 												{
-													find = true;
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
+														break;
+													}
+													continue;
+												}
+												else
+												{
 													break;
 												}
-												continue;
 											}
 										}
 										else
@@ -4193,27 +4156,80 @@ void MyParser::Parse()
 											break;
 										}
 									}
-									else
+									else//指针类型
 									{
-										break;
+										PointerTypeSpecifyAST* pointerTypeSpecify = (PointerTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+										if (exp->expType == zx::Type::POINTER)
+										{
+											if (exp->pointerNum == pointerTypeSpecify->pointerAST->starNum)
+											{
+												if (exp->finalToType == pointerTypeSpecify->directTypeSpecifyAST->type->type)
+												{
+													if (exp->expType == zx::Type::STRUCT)
+													{
+														if (exp->structName == pointerTypeSpecify->directTypeSpecifyAST->structNameIdentifier->identifier)
+														{
+															if (j == rparaList->realParaItemASTs->size() - 1)
+															{
+																find = true;
+																funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
+																break;
+															}
+															continue;
+														}
+														else
+														{
+															break;
+														}
+													}
+													else
+													{
+														if (j == rparaList->realParaItemASTs->size() - 1)
+														{
+															find = true;
+															funcCallStmt->retTypeSpecify = func->typeSpecifyAST;
+															break;
+														}
+														continue;
+													}
+												}
+												else
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														break;
+													}
+													continue;
+												}
+											}
+											else
+											{
+												break;
+											}
+										}
+										else
+										{
+											break;
+										}
 									}
+
 								}
-								
+							}
+							else
+							{
+								continue;
 							}
 						}
-						else
+						if (!find)
 						{
-							continue;
+							throw Exception(StaticSemaEx, lP->row, "函数参数列表类型不匹配");
 						}
 					}
-					if (!find)
+					else
 					{
-						throw Exception(StaticSemaEx, lP->row, "函数参数列表类型不匹配");
+						throw Exception(StaticSemaEx, lP->row, "函数未定义");
 					}
-				}
-				else
-				{
-					throw Exception(StaticSemaEx, lP->row, "函数未定义");
 				}
 #endif
 				//静态语义检查 end

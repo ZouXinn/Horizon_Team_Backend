@@ -73,7 +73,7 @@ struct Symbol
 {
 	int row = 0;
 	string value = "";
-	Token token;
+	zx::Token token;
 };
 
 class MyLexer
@@ -83,12 +83,12 @@ private:
 	int curSymIndex = 0;
 	vector<Symbol*>* symVecPointer = nullptr;
 	static string keyWords[];
-	static Token keyTokens[];
+	static zx::Token keyTokens[];
 	static int keyNum;
 
 	SourceCode* readSourceCode(const char* fileName,bool isFile);
 	void buildSymbols();
-	static Token inKey(string str);
+	static zx::Token inKey(string str);
 
 
 public:

@@ -41,24 +41,6 @@ BasicBlock* BB = nullptr;
 
 std::unique_ptr<legacy::FunctionPassManager> TheFPM;
 
-void InitializeModuleAndPassManager(void) {
-	// Open a new module.
-	TheModule = std::make_unique<Module>("my cool jit", TheContext);
-
-	// Create a new pass manager attached to it.
-	TheFPM = std::make_unique<legacy::FunctionPassManager>(TheModule.get());
-
-	// Do simple "peephole" optimizations and bit-twiddling optzns.
-	TheFPM->add(createInstructionCombiningPass());
-	// Reassociate expressions.
-	TheFPM->add(createReassociatePass());
-	// Eliminate Common SubExpressions.
-	TheFPM->add(createGVNPass());
-	// Simplify the control flow graph (deleting unreachable blocks, etc).
-	TheFPM->add(createCFGSimplificationPass());
-
-	TheFPM->doInitialization();
-}
 
 
 BasicBlock* updateBB()
@@ -76,4 +58,24 @@ BasicBlock* updateBB()
 }
 
 
+#ifdef _WIN32
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+///read
+extern "C" DLLEXPORT void readInt(int &i) {
+	fscanf(stdin, "%d", &i);//是否需要取消& ？
+}
+extern "C" DLLEXPORT void readDouble(double d) {
+	fscanf(stdin, "%f", &d);
+}
+
+///write
+extern "C" DLLEXPORT void writeInt(int i) {
+	fprintf(stdout, "%d\n", i);
+}
+extern "C" DLLEXPORT void writeDouble(double d) {
+	fprintf(stdout, "%f\n", d);
+}
 
