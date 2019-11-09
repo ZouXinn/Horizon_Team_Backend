@@ -437,6 +437,8 @@ Value* ExpAST::codegen() {
 		Val->print(errs());
 		cout << "\n";
 		return Val;
+	case 4:
+		return this->funcCallStmtAST->codegen();
 	default:
 		break;
 	}

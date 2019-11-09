@@ -1,5 +1,5 @@
 #include "RealParaItemAST.h"
-
+#include "ExpAST.h"
 
 
 RealParaItemAST::RealParaItemAST(ExpAST* expAST)
@@ -13,5 +13,13 @@ RealParaItemAST::~RealParaItemAST()
 	{
 		delete this->expAST;
 	}
+}
+
+Value* RealParaItemAST::codegen() {
+	Value* val = expAST->codegen();
+	/*if (AllocaInst::classof(val)) {
+		val = Builder.CreateLoad(val);
+	}*/
+	return val;
 }
 

@@ -31,7 +31,16 @@ void RealParaListAST::addRealParaListAST(RealParaItemAST* ast)
 ArrayRef<Value*> RealParaListAST::codegenArr() {
 	vector<Value*> valVector;
 	for (int i = realParaItemASTs->size()-1; i >= 0 ; i--) {
-		//valVector.push_back()
+		valVector.push_back(realParaItemASTs->at(i)->codegen());
 	}
-	return ArrayRef<Value*>();
+	ArrayRef<Value*> ret = ArrayRef<Value*>(valVector);
+	return ret;
+}
+
+vector<Value*> RealParaListAST::codegenVec() {
+	vector<Value*> valVector;
+	for (int i = realParaItemASTs->size() - 1; i >= 0; i--) {
+		valVector.push_back(realParaItemASTs->at(i)->codegen());
+	}
+	return valVector;
 }

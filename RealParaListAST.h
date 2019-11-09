@@ -15,5 +15,6 @@ public:
 
 
 	ArrayRef<Value*> codegenArr();
+	vector<Value*> codegenVec();
 };
 
