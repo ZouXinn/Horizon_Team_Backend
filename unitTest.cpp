@@ -20,6 +20,8 @@ void testParser()
 		MyParser* parser = new MyParser(sourceCodePath, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",true);
 		parser->Parse();
 		parser->CodeGen();
+		addJIT();
+
 	}
 	catch (Exception e)
 	{
@@ -34,7 +36,6 @@ void testParser2()
 	try {
 		MyParser* parser = new MyParser(sourceCode, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",false);
 		parser->Parse();
-		addJIT();
 	}
 	catch (Exception e)
 	{
