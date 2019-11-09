@@ -36,7 +36,7 @@ Value* IfStmtAST::codegen()
 	if (elseStmts == nullptr) {
 		Value* CondV = expAST->codegen();
 		if (!CondV)return nullptr;
-		CondV = Builder.CreateFCmpONE(CondV, ConstantFP::get(TheContext, APFloat(0.0)), "ifcond");
+		CondV = Builder.CreateICmpNE((Constant*)CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");
 
 		Function* TheFunciton = Builder.GetInsertBlock()->getParent();
 
@@ -61,11 +61,11 @@ Value* IfStmtAST::codegen()
 
 		TheFunciton->getBasicBlockList().push_back(MergeBB);
 		Builder.SetInsertPoint(MergeBB);
-		PHINode* PN = Builder.CreatePHI(Type::getDoubleTy(TheContext), 2, "iftmp");
-		PN->addIncoming(ThenV, ThenBB);
-		//PN->addIncoming(ElseV, ElseBB);
-		PN->print(errs());
-		return PN;
+		//PHINode* PN = Builder.CreatePHI(Type::getDoubleTy(TheContext), 2, "iftmp");
+		//PN->addIncoming(ThenV, ThenBB);
+		////PN->addIncoming(ElseV, ElseBB);
+		//PN->print(errs());
+		return ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
 	}
 	else {//if(){}else{}
 		Value* CondV = expAST->codegen();
@@ -103,5 +103,4 @@ Value* IfStmtAST::codegen()
 
 		/*return nullptr;*/
 	}
-
 }

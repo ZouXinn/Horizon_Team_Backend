@@ -204,5 +204,6 @@ public:
 
 	void Parse();
 	void CodeGen();
+	void RunJIT();
 };
 

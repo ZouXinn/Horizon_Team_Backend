@@ -83,11 +83,11 @@ ExpAST::~ExpAST()
 }
 
 Value* ExpAST::codegen() {
-	Value* LVar;
-	Value* RVar;
-	Value* Val;
-	AllocaInst* allo;
-	ConstantFP* LVarV;
+	Value* LVar = nullptr;
+	Value* RVar = nullptr;
+	Value* Val = nullptr;
+	AllocaInst* allo = nullptr;
+	ConstantFP* LVarV = nullptr;
 	bool BothIsInterger;
 	if (left != NULL) {
 		LVar = left->codegen();
@@ -101,6 +101,9 @@ Value* ExpAST::codegen() {
 		switch (operatorAST->op)
 		{
 		case Op::NOT:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
 			Val = Builder.CreateNot(LVar);
 			//Val->getType()->print(errs());  //i32
 			//cout << endl;
@@ -108,6 +111,9 @@ Value* ExpAST::codegen() {
 			std::cout << "\n";
 			return Val;
 		case Op::MINUS:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
 			Val = Builder.CreateNeg(LVar);
 			//Val->getType()->print(errs()); //i32
 			//cout << endl;
@@ -122,10 +128,16 @@ Value* ExpAST::codegen() {
 			break;
 		}
 		break;
-	case 1:
+	case 1://双目运算符
 		switch (operatorAST->op)
 		{
 		case Op::ADD:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateAdd(LVar, RVar);
@@ -149,6 +161,12 @@ Value* ExpAST::codegen() {
 			std::cout << "\n";
 			return Val;
 		case Op::MINUS:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateSub(LVar, RVar);
@@ -172,6 +190,12 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::STAR:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateMul(LVar, RVar);
@@ -200,7 +224,12 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::DIVIDE://如果两个都是int类型，也要转换吗？
-
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			BothIsInterger = true;
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
@@ -236,6 +265,12 @@ Value* ExpAST::codegen() {
 			}
 			return Val;
 		case Op::MORE:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateICmpSGT(LVar, RVar, "GreaterTmp");
@@ -260,6 +295,12 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::MOREOREQ:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				//Val = Builder.CreateMul(LVar, RVar);
@@ -283,6 +324,12 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::LESS:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				//Val = Builder.CreateMul(LVar, RVar);
@@ -292,6 +339,10 @@ Value* ExpAST::codegen() {
 				cout << "\n";
 				return Val;
 			}
+			LVar->getType()->print(errs());
+			cout << endl;
+			RVar->getType()->print(errs());
+			cout << endl;
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
 				LVar->print(errs());
@@ -306,6 +357,12 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::LESSOREQ:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				//Val = Builder.CreateMul(LVar, RVar);
@@ -329,6 +386,12 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::EQ:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				//Val = Builder.CreateMul(LVar, RVar);
@@ -352,6 +415,12 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::NEQ:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				//Val = Builder.CreateMul(LVar, RVar);
@@ -375,6 +444,12 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::AND://CreateAnd难道是按位与吗？
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			Val = Builder.CreateAnd(LVar, RVar);
 			//cout << endl;
 			//Val->getType()->print(errs());//    Val->getType() == i32 (1位无符号整数)
@@ -382,6 +457,12 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::OR:
+			if (AllocaInst::classof(LVar)) {
+				LVar = Builder.CreateLoad(LVar);
+			}
+			if (AllocaInst::classof(RVar)) {
+				RVar = Builder.CreateLoad(RVar);
+			}
 			Val = Builder.CreateOr(LVar, RVar);
 			Val->print(errs());
 			cout << "\n";
@@ -390,15 +471,55 @@ Value* ExpAST::codegen() {
 			break;
 		}
 		break;
-	case 2:
+	case 2://Val
 		return valAST->codegen();
-	case 3:
+	case 3://varName
 		/*return NamedValues[varNameAST->codegenStr()];*/
-		allo = NamedValues[varNameAST->codegenStr()];
-		Val = Builder.CreateLoad(allo);
+		if (varNameAST->type == 1) {//如果是数组的某个元素 --> 那么就返回一个AllocaInst* ， 需要修改上面的case1的吗？
+			/*allo = NamedValues[varNameAST->codegenStr()];
+			Val = Builder.CreateLoad(allo);*/
+			Val = varNameAST->codegen();
+
+			 
+
+
+			if (ArrayType::classof(Val->getType())) {
+
+			}
+			else {//wrong
+
+			}
+			Val->print(errs());
+		}
+		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
+			allo = NamedValues[varNameAST->codegenStr()];
+			//Val = Builder.CreateLoad(allo);
+
+
+			//return Val;
+			return allo;
+		}
+		else if (varNameAST->type == 4) {// varName -> * exp   , 则可能是在左部
+
+		}
+		
+
+
+		if (Val->getType()->isArrayTy()) {
+			if (Val->getType()->getArrayElementType()->isIntegerTy()) {//int[]
+				cout << 1;
+			}
+			else if (Val->getType()->getArrayElementType()->isDoubleTy()) {//real[]
+				cout << 2;
+			}
+			//else if()
+		}
+
 		Val->print(errs());
 		cout << "\n";
 		return Val;
+	case 4:
+		return this->funcCallStmtAST->codegen();
 	default:
 		break;
 	}
