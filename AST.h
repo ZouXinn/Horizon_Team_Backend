@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include "ClassProject.h"
-#include "../Horizon_Team/Parser/src/FromLexer/MyLexer.h"
+#include "../src/FromLexer/MyLexer.h""
 using namespace std;
 
 
