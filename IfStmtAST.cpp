@@ -72,8 +72,12 @@ Value* IfStmtAST::codegen()
 
 		if (!CondV)return nullptr;
 
+		
 		CondV = Builder.CreateICmpNE((Constant*)CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");
-
+		//冯文翰于 11.11 0:09本想尝试修改，后因问题有点复杂作罢
+		/*CondV->print(errs());
+		CondV = Builder.CreateLoad(CondV);
+		CondV = Builder.CreateICmpNE(CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");*/
 
 		Function* TheFunciton = Builder.GetInsertBlock()->getParent();
 

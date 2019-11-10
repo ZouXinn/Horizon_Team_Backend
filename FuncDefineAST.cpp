@@ -92,7 +92,9 @@ Value* FuncDefineAST::codegen() {
 	if (Value* RetVal = stmtsAST->codegen()) {
 
 		//Builder.CreateRet(RetVal);
-		Type* retType = FT->getReturnType();
+
+		//·ëÎÄº²ÓÚ11.11 0£º02×¢ÊÍ
+		/*Type* retType = FT->getReturnType();
 		if (retType->isIntegerTy()) {
 			Builder.CreateRet(ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0)));
 		}
@@ -101,7 +103,9 @@ Value* FuncDefineAST::codegen() {
 		}
 		else if (retType->isVoidTy()) {
 			Builder.CreateRetVoid();
-		}
+		}*/
+
+
 		currentFun = Builder.GetInsertBlock()->getParent();
 
 		verifyFunction(*currentFun);
