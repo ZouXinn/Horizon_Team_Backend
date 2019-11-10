@@ -104,6 +104,10 @@ Value* FuncDefineAST::codegen() {
 		else if (retType->isVoidTy()) {
 			Builder.CreateRetVoid();
 		}*/
+		Type* retType = FT->getReturnType();
+		if (retType->isVoidTy()) {
+			Builder.CreateRetVoid();
+		}
 
 
 		currentFun = Builder.GetInsertBlock()->getParent();
