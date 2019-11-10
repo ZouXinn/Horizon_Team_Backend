@@ -76,7 +76,7 @@ string VarNameAST::codegenStr()
 	switch (type)
 	{
 	case 0:
-		return identifier->codegenStr();
+		return identifier->codegenStr()+"__"+to_string(level);
 	case 1:
 		return left->identifier->codegenStr();
 	default:
@@ -97,13 +97,15 @@ Value* VarNameAST::codegen()
 	switch (type)
 	{
 	case 0:
-		return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
+		//return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
+		return getHighestValue(identifier->codegenStr());
 	case 1://varName[exp]
 		expVal = intExp->codegen();
 		if (AllocaInst::classof(expVal)) {
 			expVal = Builder.CreateLoad(expVal);
 		}
-		allo = NamedValues[this->codegenStr()]; // allo是varName的内存空间，需要找到按下标访问的方法
+		//allo = NamedValues[this->codegenStr()]; // allo是varName的内存空间，需要找到按下标访问的方法
+		allo = getHighestValue(this->codegenStr());
 		//或者不用allo,用load之后的allo?
 		
 		/*
@@ -151,7 +153,8 @@ vector<Value*> VarNameAST::codegenAlloAndExpValue() {//第一个是varName的allo，第
 		return ret;
 	}
 	else {
-		ret.push_back(NamedValues[this->codegenStr()]);
+		//ret.push_back(NamedValues[this->codegenStr()]);
+		ret.push_back(getHighestValue(this->codegenStr()));
 		ret.push_back(intExp->codegen());
 		return ret;
 	}

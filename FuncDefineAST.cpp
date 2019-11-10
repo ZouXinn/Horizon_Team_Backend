@@ -64,8 +64,11 @@ Value* FuncDefineAST::codegen() {
 	if (type->isDoubleTy()) {
 		FT = FunctionType::get(Type::getDoubleTy(TheContext), params, false);
 	}
-	if (type->isIntegerTy()) {
+	else if (type->isIntegerTy()) {
 		FT = FunctionType::get((Type*)Type::getInt32Ty(TheContext), params, false);
+	}
+	else if (type->isVoidTy()) {
+		FT = FunctionType::get((Type*)Type::getVoidTy(TheContext), params, false);
 	}
 
 	currentFun = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
@@ -86,27 +89,36 @@ Value* FuncDefineAST::codegen() {
 	Builder.SetInsertPoint(BB);
 
 	//liu start
-	/*if (Value* RetVal = stmtsAST->codegen()) {
+	if (Value* RetVal = stmtsAST->codegen()) {
 
-		Builder.CreateRet(RetVal);
-
+		//Builder.CreateRet(RetVal);
+		Type* retType = FT->getReturnType();
+		if (retType->isIntegerTy()) {
+			Builder.CreateRet(ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0)));
+		}
+		else if (retType->isDoubleTy()) {
+			Builder.CreateRet(ConstantFP::get(TheContext, APFloat(0.0)));
+		}
+		else if (retType->isVoidTy()) {
+			Builder.CreateRetVoid();
+		}
 		currentFun = Builder.GetInsertBlock()->getParent();
 
 		verifyFunction(*currentFun);
 		currentFun->print(errs());
 		currentFun = NULL;
 		return nullptr;
-	}*/
+	}
 	//liu end
 
 	//zx start
-	stmtsAST->codegen();
+	/*stmtsAST->codegen();
 	currentFun = Builder.GetInsertBlock()->getParent();
 
 	verifyFunction(*currentFun);
 	currentFun->print(errs());
 	currentFun = NULL;
-	return nullptr;
+	return nullptr;*/
 
 	//zx end
 
