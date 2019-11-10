@@ -34,7 +34,7 @@ Value* ProgramAST::codegen() {
 
 	updateBB();
 
-
+	
 	for (int i = this->dec_exp_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->dec_exp_ASTs->at(i)->codegen();
@@ -44,6 +44,7 @@ Value* ProgramAST::codegen() {
 	for (int i = this->func_define_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->func_define_ASTs->at(i)->codegen();
+		NamedValues = std::map<std::string, AllocaInst*>();
 	}
 	return nullptr;
 }
@@ -63,7 +64,7 @@ void ProgramAST::RunJIT()
 	// arguments, returns a double) so we can call it as a native function.
 
     double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
-	fprintf(stderr, "Evaluated to %f\n", FP());
+	fprintf(stderr, "main exited with value %d\n", FP());
 
 	// Delete the anonymous expression module from the JIT.
 	TheJIT->removeModule(H);

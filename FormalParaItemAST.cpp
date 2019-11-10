@@ -24,5 +24,5 @@ llvm::Type* FormalParaItemAST::codegenType() {
 	return nullptr;
 }
 string FormalParaItemAST::codegenName() {
-	return decVarNameAST->codegenStr();
+	return decVarNameAST->codegenParamName();
 }

@@ -10,10 +10,14 @@ class VarDecAST:public DecExpAST
 public:
 	TypeSpecifyAST* typeSpecifyAST;
 	IdListAST* idListAST;
-
+	int level = 0;
 	VarDecAST(TypeSpecifyAST* typeSpecifyAST, IdListAST* idListAST);
 	virtual ~VarDecAST();
 
 	Value* codegen();
+
+	void setLevel(int lv) {
+		this->level = lv;
+	}
 };
 

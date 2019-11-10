@@ -2047,6 +2047,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				GoTo(tree, "<dec_var_name>");
 			}
@@ -2061,6 +2062,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id, true);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				delete rS;
 				delete lS;
@@ -2079,6 +2081,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id, true,integer);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				delete rS;
 				delete lS;
@@ -2528,6 +2531,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(id->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				GoTo(tree, "<var_name>");
 			}
@@ -2616,6 +2620,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete op;
 				GoTo(tree, "<var_name>");
@@ -2671,6 +2676,7 @@ void MyParser::Parse()
 #endif // STATIC
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				GoTo(tree, "<var_name>");
 			}
@@ -2750,6 +2756,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete op;
 				GoTo(tree, "<var_name>");
@@ -2889,6 +2896,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(leftName->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete lS;
 				delete rS;
@@ -2995,6 +3003,7 @@ void MyParser::Parse()
 				VarDecAST* varDec = (VarDecAST*)pop();
 				//set son = 7
 				varDec->son = 7;
+				varDec->setLevel(curLevel);
 				tree = varDec;
 				GoTo(tree, "<stmt>");
 			}
@@ -3016,6 +3025,7 @@ void MyParser::Parse()
 				OtherSymAST* ifSym = (OtherSymAST*)pop();
 				//create <if_stmt>
 				IfStmtAST* ifStmt = new IfStmtAST(exp, stmts);
+				ifStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3055,6 +3065,7 @@ void MyParser::Parse()
 				OtherSymAST* ifSym = (OtherSymAST*)pop();
 				//create <if_stmt>
 				IfStmtAST* ifElseStmt = new IfStmtAST(exp, thenStmts,elseStmts);
+				ifElseStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3086,6 +3097,7 @@ void MyParser::Parse()
 				OtherSymAST* whileSym = (OtherSymAST*)pop();
 				//create <while_stmt>
 				WhileStmtAST* whileStmt = new WhileStmtAST(exp, stmts);
+				whileStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3118,6 +3130,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				assignStmt->setRow(semi->row);
+				assignStmt->setLevel(curLevel);
 				tree = assignStmt;
 				delete semi;
 				GoTo(tree, "<assign_stmt>");
@@ -3141,6 +3154,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				assignStmt->setRow(semi->row);
+				assignStmt->setLevel(curLevel);
 				tree = assignStmt;
 				delete semi;
 				GoTo(tree, "<assign_stmt>");
@@ -3157,6 +3171,7 @@ void MyParser::Parse()
 				VarNameAST* varName = (VarNameAST*)pop();
 				//create <assign_stmt>
 				AssignStmtAST* assignStmt = new AssignStmtAST(varName, exp);
+				assignStmt->setLevel(curLevel);
 				//静态语义检查 start
 #ifdef STATIC
 				//是不是数组的问题?        <exp>不可能是数组
@@ -3213,6 +3228,7 @@ void MyParser::Parse()
 				OtherSymAST* returnSym = (OtherSymAST*)pop();
 				//create <return_stmt>
 				ReturnStmtAST* returnStmt = new ReturnStmtAST();
+				returnStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (funcTypeAST != nullptr)
@@ -3243,6 +3259,7 @@ void MyParser::Parse()
 				OtherSymAST* returnSym = (OtherSymAST*)pop();
 				//create <return_stmt>
 				ReturnStmtAST* returnStmt = new ReturnStmtAST(exp);
+				returnStmt->setLevel(curLevel);
 #ifdef STATIC
 				if (funcTypeAST != nullptr)
 				{
@@ -3307,6 +3324,7 @@ void MyParser::Parse()
 				//create <break_stmt>
 				BreakStmtAST* breakStmt = new BreakStmtAST();
 				breakStmt->setRow(breakSym->row);
+				breakStmt->setLevel(curLevel);
 				tree = breakStmt;
 				delete semi; delete breakSym;
 				GoTo(tree, "<break_stmt>");
@@ -3320,6 +3338,7 @@ void MyParser::Parse()
 				//create <continue_stmt>
 				ContinueStmtAST* continueStmt = new ContinueStmtAST();
 				continueStmt->setRow(continueSym->row);
+				continueStmt->setLevel(curLevel);
 				tree = continueStmt;
 				delete semi; delete continueSym;
 				GoTo(tree, "<continue_stmt>");

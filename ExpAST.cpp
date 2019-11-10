@@ -480,9 +480,6 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateLoad(allo);*/
 			Val = varNameAST->codegen();
 
-			 
-
-
 			if (ArrayType::classof(Val->getType())) {
 
 			}
@@ -492,7 +489,11 @@ Value* ExpAST::codegen() {
 			Val->print(errs());
 		}
 		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
-			allo = NamedValues[varNameAST->codegenStr()];
+			//allo = NamedValues[varNameAST->codegenStr()];
+			allo = getHighestValue(varNameAST->codegenStr());
+			if (allo == nullptr) {//在形参中找
+				//currentFun->arg
+			}
 			//Val = Builder.CreateLoad(allo);
 
 

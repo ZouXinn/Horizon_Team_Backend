@@ -64,6 +64,8 @@ Value* VarDecAST::codegen() {
 
 
 			VectorType* vectorType = VectorType::get(elementType, elementNum);
+
+			//Builder.createG
 			
 			//初值 start  -----> 获得 llvm::ArrayRef<llvm::Constant*> 类型
 
@@ -117,8 +119,13 @@ Value* VarDecAST::codegen() {
 			//申请内存？
 			//AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
 			AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, vectorType);
-
-			NamedValues[iter->first] = c;
+			if (this->level == 0) {
+				GlobalValues[iter->first] = c;
+			}
+			else {
+				NamedValues[iter->first] = c;
+			}
+			
 			//在内存中装载相应的值
 			//Value* g = Builder.CreateStore(arrConstant, c);
 			Value* g = Builder.CreateStore(constantVector, c);
@@ -151,7 +158,12 @@ Value* VarDecAST::codegen() {
 				//else if(type->is)
 
 				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
-				NamedValues[iter->first] = c;
+				if (this->level == 0) {
+					GlobalValues[iter->first] = c;
+				}
+				else {
+					NamedValues[iter->first] = c;
+				}
 
 				Value* g = Builder.CreateStore(defaultVal, c);
 				g->print(errs());
@@ -174,7 +186,12 @@ Value* VarDecAST::codegen() {
 				}
 
 				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
-				NamedValues[iter->first] = c;
+				if (this->level == 0) {
+					GlobalValues[iter->first] = c;
+				}
+				else {
+					NamedValues[iter->first] = c;
+				}
 
 				if (AllocaInst::classof(Val)) {//如果是 int a = b
 					Value* RVar = Builder.CreateLoad(Val);

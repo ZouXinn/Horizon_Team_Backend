@@ -17,6 +17,8 @@ public:
 	VarNameAST* right = nullptr;
 	ExpAST* exp = nullptr;
 
+
+	int level = 0;
 	//静态语义检查 start
 	zx::Type varType = zx::Type::VOID;
 	zx::Type finalToType = zx::Type::VOID;//如果是指针，则表示最终指向的type
@@ -40,5 +42,9 @@ public:
 	string codegenStr();
 	Value* expCodegen();
 	vector<Value*> codegenAlloAndExpValue();
+
+	void setLevel(int lv) {
+		this->level = lv;
+	}
 };
 
