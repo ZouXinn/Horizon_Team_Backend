@@ -51,6 +51,8 @@ extern std::unique_ptr<Module> TheModule;
 
 extern std::map<std::string, AllocaInst*> NamedValues;
 
+extern std::map<std::string, AllocaInst*> GlobalValues;
+
 
 extern std::unique_ptr<KaleidoscopeJIT> TheJIT;
 
@@ -70,6 +72,8 @@ extern void InitializeModuleAndPassManager(void);
 extern void InitializeModule();
 
 extern BasicBlock* updateBB();
+
+extern AllocaInst* getHighestValue(string str);
 
 struct IdItem
 {
