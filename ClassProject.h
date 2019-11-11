@@ -53,6 +53,7 @@ extern std::map<std::string, AllocaInst*> NamedValues;
 
 extern std::map<std::string, AllocaInst*> GlobalValues;
 
+extern std::map<std::string, GlobalVariable*> GV;
 
 extern std::unique_ptr<KaleidoscopeJIT> TheJIT;
 

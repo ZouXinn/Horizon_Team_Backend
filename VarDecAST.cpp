@@ -16,7 +16,7 @@ VarDecAST::~VarDecAST()
 Value* VarDecAST::codegen() {
 	llvm::Type* type = typeSpecifyAST->codegenType();
 	map<string, ID*> b = idListAST->codegenMap();
-	cout << "VarDecAST" << "\n";
+	//cout << "VarDecAST" << "\n";
 
 	map< string, ID* >::iterator iter;
 	iter = b.begin();
@@ -147,7 +147,7 @@ Value* VarDecAST::codegen() {
 		}
 		else {//不是数组
 			if (d->valueVector.size() == 0) {//没有为变量赋值
-				Value* defaultVal;
+				Value* defaultVal = nullptr;
 				if (type->isIntegerTy()) {//如果是int a;
 					defaultVal = ConstantInt::get(TheContext, APInt(32, 0));
 					
@@ -157,16 +157,25 @@ Value* VarDecAST::codegen() {
 				}
 				//else if(type->is)
 
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
+				
 				if (this->level == 0) {
-					GlobalValues[iter->first] = c;
+					//GlobalVariable* gv = new GlobalVariable(type, false, GlobalValue::LinkageTypes::ExternalLinkage, (Constant*)defaultVal,iter->first);
+					GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)defaultVal,iter->first);
+					//GlobalValues[iter->first] = c;
+					//CreateGlabol
+
+					gv->print(errs());
+					GV[iter->first] = gv;
 				}
 				else {
+					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
 					NamedValues[iter->first] = c;
+					Value* g = Builder.CreateStore(defaultVal, c);
+					g->print(errs());
 				}
 
-				Value* g = Builder.CreateStore(defaultVal, c);
-				g->print(errs());
+				/*Value* g = Builder.CreateStore(defaultVal, c);
+				g->print(errs());*/
 			}
 			else {
 				Value* Val = (d->valueVector)[0];
@@ -185,27 +194,30 @@ Value* VarDecAST::codegen() {
 					}
 				}
 
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
+				
 				if (this->level == 0) {
-					GlobalValues[iter->first] = c;
+					GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, iter->first);
+					gv->print(errs());
+					GV[iter->first] = gv;
+					//GlobalValues[iter->first] = c;
 				}
 				else {
+					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
 					NamedValues[iter->first] = c;
-				}
-
-				if (AllocaInst::classof(Val)) {//如果是 int a = b
-					Value* RVar = Builder.CreateLoad(Val);
-					RVar->print(errs());
-					cout << "\n";
-					Value* LVar = Builder.CreateStore(RVar, c);
-					LVar->print(errs());
-					cout << "\n";
-				}
-				else {//如果是 int a = 1
-					Value* g = Builder.CreateStore(Val, c);
-					/*Value* g = Builder.CreateStore(iter->second, c);*/
-					g->print(errs());
-					cout << "\n";
+					if (AllocaInst::classof(Val)) {//如果是 int a = b
+						Value* RVar = Builder.CreateLoad(Val);
+						//RVar->print(errs());
+						//cout << "\n";
+						Value* LVar = Builder.CreateStore(RVar, c);
+						//LVar->print(errs());
+						//cout << "\n";
+					}
+					else {//如果是 int a = 1
+						Value* g = Builder.CreateStore(Val, c);
+						/*Value* g = Builder.CreateStore(iter->second, c);*/
+						//g->print(errs());
+						//cout << "\n";
+					}
 				}
 			}
 		}

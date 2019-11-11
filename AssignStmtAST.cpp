@@ -100,7 +100,10 @@ Value* AssignStmtAST::codegen()
 				Val = Builder.CreateStore(tempVal, varNameVal);
 			}
 
-
+			//Global
+			if (GlobalVariable::classof(varNameVal)) {
+				Builder.CreateStore(expVal, varNameVal);
+			}
 
 
 

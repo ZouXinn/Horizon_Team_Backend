@@ -5,6 +5,8 @@ std::unique_ptr<Module> TheModule;
 
 std::map<std::string, AllocaInst*> NamedValues;
 std::map<std::string, AllocaInst*> GlobalValues;
+std::map<std::string, GlobalVariable*> GV;
+
 map<string, int*> testMap;
 IRBuilder<> Builder(TheContext);
 
@@ -44,9 +46,16 @@ AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 		}
 	}
 	string ts = substr + to_string(num);
-	if (GlobalValues.count(ts) == 1) {
-		return GlobalValues[ts];
-
+	if (GV.count(ts) == 1) {
+		//return GlobalValues[ts];
+		if (AllocaInst::classof(GV[ts])) {
+			return ((AllocaInst*)GV[ts]);
+		}
+		else {
+			cout << "no";
+			return ((AllocaInst*)GV[ts]);
+		}
+		//return AlGV[ts];
 	}
 	else {
 		return nullptr;
