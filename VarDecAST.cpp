@@ -128,7 +128,7 @@ Value* VarDecAST::codegen() {
 				gv->print(errs());
 				cout << endl;
 				GV[iter->first] = gv;
-				if (noneConstIndex.size() > 0) {
+				if (noneConstIndex.size() > 0) {//不会出现
 					Value* vectorValue = Builder.CreateLoad(gv);
 					//vectorValue = Builder.CreateLoad(gv);
 					vectorValue->print(errs()); cout << endl;
@@ -225,7 +225,7 @@ Value* VarDecAST::codegen() {
 
 				
 				if (this->level == 0) {
-					if (GlobalVariable::classof(Val)||!Constant::classof(Val)) {
+					if (GlobalVariable::classof(Val)||!Constant::classof(Val)) {//不会出现
 						//GlobalVariable* gv = nullptr;
 						//Constant* c = ((GlobalVariable*)Val)->getInitializer();
 						//gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, c, iter->first);
@@ -233,7 +233,7 @@ Value* VarDecAST::codegen() {
 						////Value* g = Builder.CreateStore(Val, gv);
 						////g->print(errs()); cout << endl;
 						//GV[iter->first] = gv;
-						throw Exception(DynamicSemaEx, this->row, "全局变量只能用常量初始化!");
+						//throw Exception(DynamicSemaEx, this->row, "全局变量只能用常量初始化!");
 					}
 					else {
 						GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, iter->first);
