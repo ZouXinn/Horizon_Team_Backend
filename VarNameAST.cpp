@@ -98,7 +98,7 @@ Value* VarNameAST::codegen()
 	{
 	case 0:
 		//return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
-		return getHighestValue(identifier->codegenStr());
+		return getHighestValue(this->codegenStr());
 	case 1://varName[exp]
 		expVal = intExp->codegen();
 		if (AllocaInst::classof(expVal)) {

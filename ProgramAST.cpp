@@ -38,6 +38,8 @@ Value* ProgramAST::codegen() {
 	for (int i = this->dec_exp_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->dec_exp_ASTs->at(i)->codegen();
+		//GlobalVariable()
+		//Builder.CreateG
 	}
 
 

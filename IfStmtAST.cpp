@@ -69,6 +69,9 @@ Value* IfStmtAST::codegen()
 	}
 	else {//if(){}else{}
 		Value* CondV = expAST->codegen();
+		if (AllocaInst::classof(CondV)) {
+			CondV = Builder.CreateLoad(CondV);
+		}
 		//Value* compare = ConstantFP::get(TheContext, APFloat(0.0));
 		if (!CondV)return nullptr;
 		//CondV = cast<ConstantFP>(CondV);
