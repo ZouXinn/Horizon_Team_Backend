@@ -141,8 +141,8 @@ Value* ExpAST::codegen() {
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateAdd(LVar, RVar);
-				Val->print(errs());
-				std::cout << "\n";
+				//Val->print(errs());
+				//std::cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -170,8 +170,8 @@ Value* ExpAST::codegen() {
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateSub(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -199,8 +199,8 @@ Value* ExpAST::codegen() {
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateMul(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -234,8 +234,8 @@ Value* ExpAST::codegen() {
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateSDiv(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 
@@ -275,8 +275,8 @@ Value* ExpAST::codegen() {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateICmpSGT(LVar, RVar, "GreaterTmp");
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -306,8 +306,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSGE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -335,8 +335,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSLT(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			LVar->getType()->print(errs());
@@ -368,8 +368,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSLE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -397,8 +397,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpEQ(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -426,8 +426,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpNE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -464,8 +464,8 @@ Value* ExpAST::codegen() {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			Val = Builder.CreateOr(LVar, RVar);
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		default:
 			break;

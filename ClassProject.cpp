@@ -48,14 +48,14 @@ AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 	string ts = substr + to_string(num);
 	if (GV.count(ts) == 1) {
 		//return GlobalValues[ts];
-		if (AllocaInst::classof(GV[ts])) {
+		/*if (AllocaInst::classof(GV[ts])) {
 			return ((AllocaInst*)GV[ts]);
 		}
 		else {
-			cout << "no";
 			return ((AllocaInst*)GV[ts]);
-		}
+		}*/
 		//return AlGV[ts];
+		return ((AllocaInst*)GV[ts]);
 	}
 	else {
 		return nullptr;

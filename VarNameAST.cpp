@@ -78,7 +78,7 @@ string VarNameAST::codegenStr()
 	case 0:
 		return identifier->codegenStr()+"__"+to_string(level);
 	case 1:
-		return left->identifier->codegenStr();
+		return left->identifier->codegenStr()+ "__" + to_string(level);
 	default:
 		break;
 	}
