@@ -135,3 +135,4 @@ Value* FuncDefineAST::codegen() {
 	currentFun->eraseFromParent();
 	return nullptr;
 }
+
