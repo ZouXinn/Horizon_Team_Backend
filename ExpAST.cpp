@@ -101,7 +101,7 @@ Value* ExpAST::codegen() {
 		switch (operatorAST->op)
 		{
 		case Op::NOT:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
 			Val = Builder.CreateNot(LVar);
@@ -111,7 +111,7 @@ Value* ExpAST::codegen() {
 			std::cout << "\n";
 			return Val;
 		case Op::MINUS:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
 			Val = Builder.CreateNeg(LVar);
@@ -132,17 +132,17 @@ Value* ExpAST::codegen() {
 		switch (operatorAST->op)
 		{
 		case Op::ADD:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateAdd(LVar, RVar);
-				Val->print(errs());
-				std::cout << "\n";
+				//Val->print(errs());
+				//std::cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -161,17 +161,17 @@ Value* ExpAST::codegen() {
 			std::cout << "\n";
 			return Val;
 		case Op::MINUS:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateSub(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -190,17 +190,17 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::STAR:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateMul(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			//这里似乎不用加判断也可生成正常IR代码
@@ -224,18 +224,18 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::DIVIDE://如果两个都是int类型，也要转换吗？
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			BothIsInterger = true;
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateSDiv(LVar, RVar);
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 
@@ -265,18 +265,18 @@ Value* ExpAST::codegen() {
 			}
 			return Val;
 		case Op::MORE:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名
 				Val = Builder.CreateICmpSGT(LVar, RVar, "GreaterTmp");
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -295,10 +295,10 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::MOREOREQ:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -306,8 +306,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSGE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -324,10 +324,10 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::LESS:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -335,8 +335,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSLT(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			LVar->getType()->print(errs());
@@ -357,10 +357,10 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::LESSOREQ:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -368,8 +368,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpSLE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -386,10 +386,10 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::EQ:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -397,8 +397,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpEQ(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -415,10 +415,10 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::NEQ:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -426,8 +426,8 @@ Value* ExpAST::codegen() {
 				//Val = Builder.CreateMul(LVar, RVar);
 				Val = Builder.CreateICmpNE(LVar, RVar);
 				Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 				return Val;
 			}
 			if (IntegerType::classof(LVar->getType())) {
@@ -444,10 +444,10 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
 			return Val;
 		case Op::AND://CreateAnd难道是按位与吗？
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			Val = Builder.CreateAnd(LVar, RVar);
@@ -457,15 +457,15 @@ Value* ExpAST::codegen() {
 			cout << "\n";
 			return Val;
 		case Op::OR:
-			if (AllocaInst::classof(LVar)) {
+			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			Val = Builder.CreateOr(LVar, RVar);
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		default:
 			break;

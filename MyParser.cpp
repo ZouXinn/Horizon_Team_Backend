@@ -258,6 +258,30 @@ AST* MyParser::pop()
 	stackTop--;
 	return ret;
 }
+bool expConst(ExpAST* exp) {
+	if (exp->type == 0 || exp->type == 2) {
+		while (exp->type == 0) {
+			exp = exp->left;
+		}
+		if (exp->type != 2) {
+			return false;
+		}
+		return true;
+	}
+	else if(exp->type == 1){
+		if (expConst(exp->left) && expConst(exp->right)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+
 void funcDataHandle(TypeSpecifyAST*& funcTypeAST, IdentifierAST*& funcId, FormalParaListAST*& funcFparaList, int& state, Token token)
 {
 	switch (state)//0 表示开始 ， 1表示移进type ， 2表示移进id ，3表示移进了(,确认了此为函数定义
@@ -1306,6 +1330,24 @@ void MyParser::Parse()
 				
 				//静态语义检查 start
 #ifdef STATIC
+				if (curLevel == 0 || funcId == nullptr) {
+					for (int i = 0; i < idList->idItemASTs->size(); i++) {
+						IdItemAST* item = idList->idItemASTs->at(i);
+						if (item->exp != nullptr) {
+							if (!expConst(item->exp)) {
+								throw Exception(StaticSemaEx, item->row, "全局变量只能用常量赋值!");
+							}
+						}
+						else if (item->exps != nullptr) {
+							for (int j = 0; j < item->exps->exps->size(); j++) {
+								ExpAST* exp = item->exps->exps->at(j);
+								if (!expConst(exp)) {
+									throw Exception(StaticSemaEx, item->row, "全局变量只能用常量赋值!");
+								}
+							}
+						}
+					}
+				}
 				if (typeSpecify->son == 0)//非指针
 				{
 					DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)typeSpecify;
@@ -2494,9 +2536,9 @@ void MyParser::Parse()
 					{
 						VarIndex index;
 						index.name = id->identifier;
-						index.funcName = i==0?"":funcId->identifier;
+						index.funcName = (i==0||funcId==nullptr)?"":funcId->identifier;
 						index.level = i;
-						index.formalParaList = i == 0?nullptr:funcFparaList;
+						index.formalParaList = (i == 0|| funcFparaList == nullptr)?nullptr:funcFparaList;
 						if (var_table->count(index) == 0)
 						{
 							continue;
@@ -2787,8 +2829,8 @@ void MyParser::Parse()
 					bool find = false;
 					for (int i = curLevel; i >= 0; i--)
 					{
-						index.funcName = i == 0 ? "" : funcId->identifier;
-						index.formalParaList = i == 0 ? nullptr : funcFparaList;
+						index.funcName = (i == 0|| funcId == nullptr) ? "" : funcId->identifier;
+						index.formalParaList = (i == 0||funcFparaList==nullptr) ? nullptr : funcFparaList;
 						index.level = i;
 						if (var_table->count(index) == 0)
 						{
@@ -3934,9 +3976,9 @@ void MyParser::Parse()
 					for (int i = curLevel; i >= 0; i--)
 					{
 						VarIndex index;
-						index.formalParaList = i==0?nullptr:funcFparaList;
+						index.formalParaList = (i==0||funcFparaList==nullptr)?nullptr:funcFparaList;
 						index.level = i;
-						index.funcName = i == 0 ? "" : funcId->identifier;
+						index.funcName = (i == 0|| funcId == nullptr) ? "" : funcId->identifier;
 						index.name = varName->identifier->identifier;
 						if (var_table->count(index) == 0)
 						{

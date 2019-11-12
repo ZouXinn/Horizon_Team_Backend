@@ -81,6 +81,8 @@ Value* FuncDefineAST::codegen() {
 		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
 		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
 		Arg.setName(name);
+		//AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, Arg.getName());  // toy4   1077 row
+		Params[name] = &Arg;
 	}
 
 	// Create a new basic block to start insertion into.

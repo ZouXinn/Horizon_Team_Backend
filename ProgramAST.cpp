@@ -38,13 +38,17 @@ Value* ProgramAST::codegen() {
 	for (int i = this->dec_exp_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->dec_exp_ASTs->at(i)->codegen();
+		//GlobalVariable()
+		//Builder.CreateG
 	}
 
 
 	for (int i = this->func_define_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->func_define_ASTs->at(i)->codegen();
-		NamedValues = std::map<std::string, AllocaInst*>();
+		NamedValues.clear();
+		Params.clear();
+		//NamedValues = std::map<std::string, AllocaInst*>();
 	}
 	return nullptr;
 }

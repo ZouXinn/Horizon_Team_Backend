@@ -30,7 +30,7 @@ map<string, ID*> IdListAST::codegenMap()
 {
 	map<string, ID*> IdListMap;
 	pair<string, ID*> IdItemPair;
-	cout << "IdListAST" << "\n";
+	//cout << "IdListAST" << "\n";
 	for (int i = idItemASTs->size() - 1; i >= 0; i--)
 	{
 		IdItemPair = idItemASTs->at(i)->codegenPair();

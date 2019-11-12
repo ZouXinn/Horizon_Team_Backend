@@ -13,10 +13,13 @@ VarDecAST::~VarDecAST()
 	delete this->typeSpecifyAST;
 	delete idListAST;
 }
+
+
+
 Value* VarDecAST::codegen() {
 	llvm::Type* type = typeSpecifyAST->codegenType();
 	map<string, ID*> b = idListAST->codegenMap();
-	cout << "VarDecAST" << "\n";
+	//cout << "VarDecAST" << "\n";
 
 	map< string, ID* >::iterator iter;
 	iter = b.begin();
@@ -87,14 +90,14 @@ Value* VarDecAST::codegen() {
 			else {//如果赋了初值
 				for (int i = 0; i < valueVector.size(); i++) {
 					Value* eleVal = valueVector[i];
-					if (ConstantInt::classof(eleVal)) {
+					if (ConstantInt::classof(eleVal) && !GlobalVariable::classof(eleVal)) {
 						eleVal = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(eleVal)->getSExtValue()));
 						if (e->isDoubleTy()) {
 							eleVal = Builder.CreateSIToFP(eleVal, llvm::Type::getDoubleTy(TheContext));
 						}
 
 					}
-					else if (ConstantFP::classof(eleVal)) {
+					else if (ConstantFP::classof(eleVal)&& !GlobalVariable::classof(eleVal)) {
 						eleVal = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(eleVal)->getValueAPF()));
 						if (e->isIntegerTy()) {
 							eleVal = Builder.CreateFPToSI(eleVal, IntegerType::get(TheContext, 32));
@@ -118,36 +121,61 @@ Value* VarDecAST::codegen() {
 			
 			//申请内存？
 			//AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
-			AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, vectorType);
+			
 			if (this->level == 0) {
-				GlobalValues[iter->first] = c;
+				//GlobalValues[iter->first] = c;
+				GlobalVariable* gv = new GlobalVariable(*TheModule, vectorType, false, GlobalValue::PrivateLinkage, constantVector, iter->first);
+				gv->print(errs());
+				cout << endl;
+				GV[iter->first] = gv;
+				if (noneConstIndex.size() > 0) {//不会出现
+					Value* vectorValue = Builder.CreateLoad(gv);
+					//vectorValue = Builder.CreateLoad(gv);
+					vectorValue->print(errs()); cout << endl;
+					for (int i = 0; i < noneConstIndex.size(); i++) {
+						Value* noneConstValue = noneConstVector[i];
+						if (AllocaInst::classof(noneConstValue) || GlobalVariable::classof(noneConstValue)) {
+							noneConstValue = Builder.CreateLoad(noneConstValue);
+						}
+						int index = noneConstIndex[i];
+						if (noneConstValue->getType()->isIntegerTy() && elementType->isDoubleTy()) {//如果需要类型转换，则进行类型转换
+							noneConstValue = Builder.CreateSIToFP(noneConstValue, Type::getDoubleTy(TheContext));
+						}
+						vectorValue = Builder.CreateInsertElement(vectorValue, noneConstValue, (uint64_t)index);
+						vectorValue->print(errs()); cout << endl;
+					}
+					Builder.CreateStore(vectorValue, gv);
+				}
 			}
 			else {
+				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, vectorType);
 				NamedValues[iter->first] = c;
+				//在内存中装载相应的值
+				//Value* g = Builder.CreateStore(arrConstant, c);
+				Value* g = Builder.CreateStore(constantVector, c);
+				if (noneConstIndex.size() > 0) {
+					Value* vectorValue = Builder.CreateLoad(c);
+					for (int i = 0; i < noneConstIndex.size(); i++) {
+						Value* noneConstValue = noneConstVector[i];
+						if (AllocaInst::classof(noneConstValue)) {
+							noneConstValue = Builder.CreateLoad(noneConstValue);
+						}
+						int index = noneConstIndex[i];
+						if (noneConstValue->getType()->isIntegerTy() && elementType->isDoubleTy()) {//如果需要类型转换，则进行类型转换
+							noneConstValue = Builder.CreateSIToFP(noneConstValue, Type::getDoubleTy(TheContext));
+						}
+						vectorValue = Builder.CreateInsertElement(vectorValue, noneConstValue, (uint64_t)index);
+					}
+					Builder.CreateStore(vectorValue, c);
+				}
 			}
 			
-			//在内存中装载相应的值
-			//Value* g = Builder.CreateStore(arrConstant, c);
-			Value* g = Builder.CreateStore(constantVector, c);
-			if (noneConstIndex.size() > 0) {
-				Value* vectorValue = Builder.CreateLoad(c);
-				for (int i = 0; i < noneConstIndex.size(); i++) {
-					Value* noneConstValue = noneConstVector[i];
-					if (AllocaInst::classof(noneConstValue)) {
-						noneConstValue = Builder.CreateLoad(noneConstValue);
-					}
-					int index = noneConstIndex[i];
-					if (noneConstValue->getType()->isIntegerTy() && elementType->isDoubleTy()) {//如果需要类型转换，则进行类型转换
-						noneConstValue = Builder.CreateSIToFP(noneConstValue, Type::getDoubleTy(TheContext));
-					}
-					vectorValue = Builder.CreateInsertElement(vectorValue, noneConstValue,(uint64_t)index);
-				}
-				Builder.CreateStore(vectorValue, c);
-			}
+			
+			
 		}
 		else {//不是数组
 			if (d->valueVector.size() == 0) {//没有为变量赋值
-				Value* defaultVal;
+				Value* defaultVal = nullptr;
 				if (type->isIntegerTy()) {//如果是int a;
 					defaultVal = ConstantInt::get(TheContext, APInt(32, 0));
 					
@@ -157,20 +185,30 @@ Value* VarDecAST::codegen() {
 				}
 				//else if(type->is)
 
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
+				
 				if (this->level == 0) {
-					GlobalValues[iter->first] = c;
+					//GlobalVariable* gv = new GlobalVariable(type, false, GlobalValue::LinkageTypes::ExternalLinkage, (Constant*)defaultVal,iter->first);
+					GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)defaultVal,iter->first);
+					//GlobalValues[iter->first] = c;
+					//CreateGlabol
+
+					gv->print(errs());
+					cout << endl;
+					GV[iter->first] = gv;
 				}
 				else {
+					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
 					NamedValues[iter->first] = c;
+					Value* g = Builder.CreateStore(defaultVal, c);
+					g->print(errs());
 				}
 
-				Value* g = Builder.CreateStore(defaultVal, c);
-				g->print(errs());
+				/*Value* g = Builder.CreateStore(defaultVal, c);
+				g->print(errs());*/
 			}
 			else {
 				Value* Val = (d->valueVector)[0];
-				if (ConstantInt::classof(Val)) {//如果初值是int
+				if (ConstantInt::classof(Val)&&!GlobalVariable::classof(Val)) {//如果初值是int
 					Val = ConstantInt::get(TheContext, APInt(32, cast<ConstantInt>(Val)->getSExtValue()));
 					if (e->isDoubleTy()) {//申请的变量是real
 						Val = Builder.CreateSIToFP(Val, llvm::Type::getDoubleTy(TheContext));
@@ -178,38 +216,60 @@ Value* VarDecAST::codegen() {
 
 				}
 				
-				if (ConstantFP::classof(Val)) {//如果初值是real
+				if (ConstantFP::classof(Val) && !GlobalVariable::classof(Val)) {//如果初值是real
 					Val = ConstantFP::get(TheContext, APFloat(cast<ConstantFP>(Val)->getValueAPF()));
 					if (e->isIntegerTy()) {//申请的变量是int   ： 应该不会走这一步
 						Val = Builder.CreateFPToSI(Val, IntegerType::get(TheContext, 32));
 					}
 				}
 
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
+				
 				if (this->level == 0) {
-					GlobalValues[iter->first] = c;
+					if (GlobalVariable::classof(Val)||!Constant::classof(Val)) {//不会出现
+						//GlobalVariable* gv = nullptr;
+						//Constant* c = ((GlobalVariable*)Val)->getInitializer();
+						//gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, c, iter->first);
+						//gv->print(errs()); cout << endl;
+						////Value* g = Builder.CreateStore(Val, gv);
+						////g->print(errs()); cout << endl;
+						//GV[iter->first] = gv;
+						//throw Exception(DynamicSemaEx, this->row, "全局变量只能用常量初始化!");
+					}
+					else {
+						GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, iter->first);
+						gv->print(errs());
+						cout << endl;
+						GV[iter->first] = gv;
+					}
+					
+					//GlobalValues[iter->first] = c;
 				}
 				else {
+					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
 					NamedValues[iter->first] = c;
-				}
-
-				if (AllocaInst::classof(Val)) {//如果是 int a = b
-					Value* RVar = Builder.CreateLoad(Val);
-					RVar->print(errs());
-					cout << "\n";
-					Value* LVar = Builder.CreateStore(RVar, c);
-					LVar->print(errs());
-					cout << "\n";
-				}
-				else {//如果是 int a = 1
-					Value* g = Builder.CreateStore(Val, c);
-					/*Value* g = Builder.CreateStore(iter->second, c);*/
-					g->print(errs());
-					cout << "\n";
+					if (AllocaInst::classof(Val)) {//如果是 int a = b
+						Value* RVar = Builder.CreateLoad(Val);
+						//RVar->print(errs());
+						//cout << "\n";
+						Value* LVar = Builder.CreateStore(RVar, c);
+						//LVar->print(errs());
+						//cout << "\n";
+					}
+					else {//如果是 int a = 1
+						Value* g = Builder.CreateStore(Val, c);
+						/*Value* g = Builder.CreateStore(iter->second, c);*/
+						//g->print(errs());
+						//cout << "\n";
+					}
 				}
 			}
 		}
 		iter++;
 	}
+	return nullptr;
+}
+
+Value* VarDecAST::codegenGlobal() 
+{
 	return nullptr;
 }

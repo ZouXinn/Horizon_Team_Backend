@@ -73,7 +73,7 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 				for (int i = this->exps->exps->size() - 1; i >= 0; i--) {
 					ExpAST* exp = this->exps->exps->at(i);
 					Value* tVal = exp->codegen();
-					if (Constant::classof(tVal)) {//是常量
+					if (Constant::classof(tVal)&&!GlobalVariable::classof(tVal)) {//是常量
 						valVector.push_back(tVal);
 					}
 					else {//不是常量
@@ -115,7 +115,7 @@ pair<string, ID*> IdItemAST::codegenPair() {//不是数组
 				for (int i = this->exps->exps->size() - 1; i >= 0; i--) {
 					ExpAST* exp = this->exps->exps->at(i);
 					Value* tVal = exp->codegen();
-					if (Constant::classof(tVal)) {
+					if (Constant::classof(tVal)&&!GlobalVariable::classof(tVal)) {
 						valVector.push_back(tVal);
 					}
 					else {

@@ -26,6 +26,8 @@ Value* ReturnStmtAST::codegen()
 		if (AllocaInst::classof(value)) {
 			value = Builder.CreateLoad(value);
 		}
+		//Builder.CreateCleanupRet(value);//???
+		
 		Builder.CreateRet(value);
 	}
 	else {

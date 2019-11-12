@@ -15,6 +15,7 @@ public:
 	virtual ~VarDecAST();
 
 	Value* codegen();
+	Value* codegenGlobal();
 
 	void setLevel(int lv) {
 		this->level = lv;
