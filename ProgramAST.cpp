@@ -62,13 +62,15 @@ void ProgramAST::RunJIT()
 
 	// Search the JIT for the __anon_expr symbol.
 	auto ExprSymbol = TheJIT->findSymbol("main");
-	assert(ExprSymbol && "未找到main函数");//到时候应该要修改
+	assert(ExprSymbol && "未找到main函数");
 
 	// Get the symbol's address and cast it to the right type (takes no
 	// arguments, returns a double) so we can call it as a native function.
 
-    int (*FP)() = (int (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
-	fprintf(stderr, "main exited with code %d\n", FP());
+    /*double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
+	fprintf(stderr, "main exited with value %f\n", FP());*/
+	int (*FP)() = (int (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
+	fprintf(stderr, "main exited with value %d\n", FP());
 
 	// Delete the anonymous expression module from the JIT.
 	TheJIT->removeModule(H);

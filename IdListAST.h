@@ -3,6 +3,7 @@
 #include "IdItemAST.h"
 #include <vector>
 
+
 class IdListAST:public AST
 {
 public:
@@ -13,7 +14,7 @@ public:
 	virtual ~IdListAST();
 	void addIdItem(IdItemAST* item);
 
-	virtual map<string, Value*> codegenMap();
+	virtual map<string, ID*> codegenMap();
 	map<string, Value*> Map;
 };
 

@@ -51,6 +51,11 @@ extern std::unique_ptr<Module> TheModule;
 
 extern std::map<std::string, AllocaInst*> NamedValues;
 
+extern std::map<std::string, AllocaInst*> GlobalValues;
+
+extern std::map<std::string, Value*> Params;
+
+extern std::map<std::string, GlobalVariable*> GV;
 
 extern std::unique_ptr<KaleidoscopeJIT> TheJIT;
 
@@ -71,6 +76,8 @@ extern void InitializeModule();
 
 extern BasicBlock* updateBB();
 
+extern AllocaInst* getHighestValue(string str);
+
 struct IdItem
 {
 	Value* decVarName;
@@ -81,5 +88,11 @@ static int currentType;
 
 extern int testInt;
 extern map<string, int*> testMap;
+
+//11.12ÈÕ 18£º55·ëÎÄº²Ìí¼Ó
+extern BasicBlock* currentRetBB;
+extern Value* currentRetValue;
+extern PHINode* currentRetPN;
+
 
 

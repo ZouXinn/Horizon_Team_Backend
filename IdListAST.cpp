@@ -26,15 +26,23 @@ void IdListAST::addIdItem(IdItemAST* item)
 	this->idItemASTs->push_back(item);
 }
 
-map<string, Value*> IdListAST::codegenMap()
+map<string, ID*> IdListAST::codegenMap()
 {
-	map<string, Value*> IdListMap;
-	pair<string, Value*> IdItemPair;
-	cout << "IdListAST" << "\n";
+	map<string, ID*> IdListMap;
+	pair<string, ID*> IdItemPair;
+	//cout << "IdListAST" << "\n";
 	for (int i = idItemASTs->size() - 1; i >= 0; i--)
 	{
 		IdItemPair = idItemASTs->at(i)->codegenPair();
 		IdListMap.insert(IdItemPair);
+		//if (!idItemASTs->at(i)->decVarNameAST->LSRS) {//不是数组
+		//	IdItemPair = idItemASTs->at(i)->codegenPair();
+		//	IdListMap.insert(IdItemPair);
+		//}
+		//else {//是数组
+		//	IdVecItem = idItemASTs->at(i)->codegenPair();
+		//	ArrayListMap.insert(IdVecItem);
+		//}
 	}
 	return IdListMap;
 }

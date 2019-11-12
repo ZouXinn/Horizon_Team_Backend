@@ -5,6 +5,7 @@
 #include <iostream>
 //#include "..//AutoTools/Exception.cpp"
 using namespace std;
+//using namespace zx;
 enum ExType { LexerEx, ParserEx, StaticSemaEx, DynamicSemaEx, OtherEx };
 
 struct SourceCode

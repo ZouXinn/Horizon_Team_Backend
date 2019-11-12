@@ -9,5 +9,7 @@ public:
 
 	RealParaItemAST(ExpAST* expAST);
 	virtual ~RealParaItemAST();
+
+	Value* codegen();
 };
 

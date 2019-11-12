@@ -13,5 +13,7 @@ public:
 	ReturnStmtAST();
 	ReturnStmtAST(ExpAST* expAST);
 	virtual ~ReturnStmtAST();
+
+	Value* codegen();
 };
 

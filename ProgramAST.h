@@ -17,5 +17,7 @@ public:
 	void addFuncDefineAST(FuncDefineAST* ast);
 
 	Value* codegen();
+
+	void RunJIT();
 };
 

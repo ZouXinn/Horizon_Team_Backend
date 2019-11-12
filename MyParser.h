@@ -190,6 +190,11 @@ private:
 	void addFuncFromFuncDefine(FuncDefineAST* funcDefine);
 	void addDecExp(DecExpAST* decExp);
 
+
+	//IR start
+	AST* root = nullptr;
+	//IR end
+
 	//DFAtools ÀïÃæµÄ
 	static map<DicIndex, string>* readSLR1Table(const char* sourceFileName);
 public:
@@ -198,5 +203,7 @@ public:
 	virtual ~MyParser();
 
 	void Parse();
+	void CodeGen();
+	void RunJIT();
 };
 
