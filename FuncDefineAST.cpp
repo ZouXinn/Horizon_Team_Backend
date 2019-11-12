@@ -1,6 +1,5 @@
 #include "FuncDefineAST.h"
 
-
 FuncDefineAST::FuncDefineAST(TypeSpecifyAST* typeSpecifyAST, FormalParaListAST* formalParaListAST, StmtsAST* stmtsAST, IdentifierAST* funcNameIdentifier)
 {
 	this->typeSpecifyAST = typeSpecifyAST;
@@ -77,6 +76,8 @@ Value* FuncDefineAST::codegen() {
 
 	unsigned Idx = 0;
 	/*for (auto& Arg : F->args()) {*/
+
+
 	for (auto& Arg : currentFun->args()) {
 		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
 		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
@@ -89,6 +90,21 @@ Value* FuncDefineAST::codegen() {
 	BasicBlock* BB = BasicBlock::Create(TheContext, "entry", currentFun);
 	/*BasicBlock* BB = BasicBlock::Create(TheContext, "entry", currentFun);*/
 	Builder.SetInsertPoint(BB);
+
+	//Args Handle  zx
+	for (auto& Arg : currentFun->args()) {
+		//Builder.CreateAddrSpaceCast()
+		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
+		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
+		//Arg.setName(name);
+		//AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, Arg.getName());  // toy4   1077 row
+		string rname = name + ".addr";
+		AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, rname,Arg.getType());
+		Builder.CreateStore(Params[name], Alloca, false);
+		Params[rname] = Alloca;
+	}
+
+
 
 	//liu start
 	if (Value* RetVal = stmtsAST->codegen()) {

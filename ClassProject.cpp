@@ -46,7 +46,7 @@ AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 			return NamedValues[ts];
 		}
 	}
-	string pts = substr + to_string(1);
+	string pts = substr + to_string(1)+".addr";
 	if (Params.count(pts) == 1){
 		return ((AllocaInst*)Params[pts]);
 	}
