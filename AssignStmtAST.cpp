@@ -100,8 +100,30 @@ Value* AssignStmtAST::codegen()
 				Val = Builder.CreateStore(tempVal, varNameVal);
 			}
 
-
-
+			//Global
+			if (GlobalVariable::classof(varNameVal)) {
+				if (((GlobalVariable*)varNameVal)->getValueType()->isDoubleTy() && expVal->getType()->isIntegerTy()) {
+					expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+				}
+				Builder.CreateStore(expVal, varNameVal);
+			}
+			else if (Argument::classof(varNameVal)) {
+				if (((Argument*)varNameVal)->getType()->isDoubleTy()) {
+					if (expVal->getType()->isIntegerTy()) {
+						expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
+					}
+					varNameVal = Builder.CreateAdd(expVal, ConstantFP::get(TheContext, APFloat(0.0)));
+					//Params[varNameVal->getName()] = varNameVal;
+				}
+				else {
+					varNameVal = Builder.CreateAdd(expVal, varNameVal);
+					expVal->print(errs()); cout << endl;
+					varNameVal->print(errs()); cout << endl;
+					//Params[varNameVal->getName()] = varNameVal;
+				}
+				//Builder.Create
+				//Builder.CreateStore(expVal, varNameVal);
+			}
 
 
 

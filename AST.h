@@ -14,7 +14,7 @@ public:
 	string content;
 	void setRow(int row);
 	virtual ~AST();
-	virtual Value* codegen();
+	virtual Value* codegen();// virtual Value* codegen() throw (Exception);
 	virtual ArrayRef<Value*> codegenArr();
 	
 };
