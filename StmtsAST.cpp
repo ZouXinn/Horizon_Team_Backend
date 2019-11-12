@@ -34,6 +34,13 @@ Value* StmtsAST::codegen()
 		for (int i = this->stmtASTs->size() - 1; i >= 0; i--)
 		{
 			Val = this->stmtASTs->at(i)->codegen();
+
+			//冯文翰于11月12日23：41修改
+			//如果这个stmt是return，那么直接返回
+			if (this->stmtASTs->at(i)->son == 4) {
+				return ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
+			}
+
 		}
 	}
 

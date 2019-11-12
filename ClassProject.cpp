@@ -186,3 +186,8 @@ extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
 
+BasicBlock* currentRetBB;
+Value* currentRetValue;
+PHINode* currentRetPN;
+
+
