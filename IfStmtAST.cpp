@@ -104,16 +104,18 @@ Value* IfStmtAST::codegen()
 		Builder.SetInsertPoint(ThenBB);
 		Value* ThenV = thenStmts->codegen();
 		if (!ThenV)return nullptr;
-		Builder.CreateBr(MergeBB);
+		//如果Then语句块中已经包含终结符了，就不需要再生成Br
+		if (Builder.GetInsertBlock()->getTerminator() == NULL) Builder.CreateBr(MergeBB);
 		ThenBB = Builder.GetInsertBlock();
 
 		TheFunciton->getBasicBlockList().push_back(ElseBB);
 		Builder.SetInsertPoint(ElseBB);
 		Value* ElseV = elseStmts->codegen();
 		if (!ElseV)return nullptr;
-		Builder.CreateBr(MergeBB);
-		ElseBB = Builder.GetInsertBlock();
 
+		if (Builder.GetInsertBlock()->getTerminator() == NULL) Builder.CreateBr(MergeBB);
+		//如果Else语句块中已经包含终结符了，就不需要再生成Br
+		ElseBB = Builder.GetInsertBlock();
 		TheFunciton->getBasicBlockList().push_back(MergeBB);
 		Builder.SetInsertPoint(MergeBB);
 

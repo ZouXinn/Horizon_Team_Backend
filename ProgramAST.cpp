@@ -67,7 +67,9 @@ void ProgramAST::RunJIT()
 	// Get the symbol's address and cast it to the right type (takes no
 	// arguments, returns a double) so we can call it as a native function.
 
-    double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
+    /*double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
+	fprintf(stderr, "main exited with value %f\n", FP());*/
+	int (*FP)() = (int (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
 	fprintf(stderr, "main exited with value %d\n", FP());
 
 	// Delete the anonymous expression module from the JIT.

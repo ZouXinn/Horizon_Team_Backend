@@ -21,9 +21,6 @@ WhileStmtAST::~WhileStmtAST()
 Value* WhileStmtAST::codegen()
 {
 	cout << "WhileStmtAST\n";
-	/*if (isa<ConstantInt>(expAST->codegen())) {
-		cout << "\nDeer.xl\n";
-	}*/
 
 	Value* Val;
 
@@ -33,33 +30,22 @@ Value* WhileStmtAST::codegen()
 	BasicBlock* ExpBB = BasicBlock::Create(TheContext, "ExpBB", currentFun);
 	BasicBlock* AfterBB = BasicBlock::Create(TheContext, "afterloop", currentFun);
 
-	Val = Builder.CreateBr(ExpBB);
+	//如果Prehead语句块中已经包含终结符了，就不需要再生成Br
+	if (Builder.GetInsertBlock()->getTerminator() == NULL) Val = Builder.CreateBr(ExpBB);
 
 	Builder.SetInsertPoint(ExpBB);
 	Value* a = expAST->codegen();
+	if (AllocaInst::classof(a)) {
+		a = Builder.CreateLoad(a);
+	}
 	Value* b = Builder.CreateICmpNE(a, ConstantInt::get(TheContext, APInt(32, 0)));
 	Builder.CreateCondBr(b, LoopBB, AfterBB);
 
 
 	Builder.SetInsertPoint(LoopBB);
 	Value* c = stmtsAST->codegen();
-	Builder.CreateBr(ExpBB);
-
-	/*PHINode *Variable = Builder.CreatePHI(IntegerType::get(TheContext,32),2,Va)*/
-
-
-
-
-	/*PreheaderBB->print(errs());
-	cout << "\n";
-	ExpBB->print(errs());
-	cout << "\n";
-	LoopBB->print(errs());
-	cout << "\n";
-	AfterBB->print(errs());
-	cout << "\n";*/
-
-
+	//如果Loop语句块中已经包含终结符了，就不需要再生成Br
+	if (Builder.GetInsertBlock()->getTerminator() == NULL) Builder.CreateBr(ExpBB);
 
 	Builder.SetInsertPoint(AfterBB);
 

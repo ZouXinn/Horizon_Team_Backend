@@ -89,4 +89,10 @@ static int currentType;
 extern int testInt;
 extern map<string, int*> testMap;
 
+//11.12ÈÕ 18£º55·ëÎÄº²Ìí¼Ó
+extern BasicBlock* currentRetBB;
+extern Value* currentRetValue;
+extern PHINode* currentRetPN;
+
+
 
