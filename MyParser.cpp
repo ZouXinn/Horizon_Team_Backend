@@ -607,7 +607,7 @@ void MyParser::Parse()
 				ast = new IdentifierAST(value);
 				ast->setRow(row);
 				this->push(ast, action.aim);
-				if (curLevel == 0)
+				if (curLevel == 0 && state != 3)
 				{
 					funcId = (IdentifierAST*)ast;
 				}
@@ -4285,6 +4285,145 @@ void MyParser::Parse()
 						if (!find)
 						{
 							throw Exception(StaticSemaEx, lP->row, "函数参数列表类型不匹配");
+						}
+					}
+					else if(funcName == funcId->identifier){
+						if (rparaList->realParaItemASTs != nullptr ) {
+							if (funcFparaList->formalParaItemASTs != nullptr) {
+								bool find = false;
+								for (int j = 0; j < rparaList->realParaItemASTs->size(); j++)
+								{
+									FormalParaItemAST* fParaItem = funcFparaList->formalParaItemASTs->at(j);
+									RealParaItemAST* rParaItem = rparaList->realParaItemASTs->at(j);
+									ExpAST* exp = rParaItem->expAST;
+									if (fParaItem->typeSpecifyAST->son == 0)
+									{
+										if (exp->expType != zx::Type::POINTER)
+										{
+											DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+											if (exp->expType == dtypeSpecify->type->type)
+											{
+												if (exp->expType == zx::Type::STRUCT)
+												{
+													if (exp->structName == dtypeSpecify->structNameIdentifier->identifier)
+													{
+														if (j == rparaList->realParaItemASTs->size() - 1)
+														{
+															find = true;
+															funcCallStmt->retTypeSpecify = funcTypeAST;
+															break;
+														}
+														continue;
+													}
+													else
+													{
+														break;
+													}
+												}
+												else
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														funcCallStmt->retTypeSpecify = funcTypeAST;
+														break;
+													}
+													continue;
+												}
+											}
+											else
+											{
+												if (dtypeSpecify->type->type == zx::Type::REAL && exp->expType == zx::Type::INT)
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														funcCallStmt->retTypeSpecify = funcTypeAST;
+														break;
+													}
+													continue;
+												}
+												else
+												{
+													break;
+												}
+											}
+										}
+										else
+										{
+											break;
+										}
+									}
+									else//指针类型
+									{
+										PointerTypeSpecifyAST* pointerTypeSpecify = (PointerTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+										if (exp->expType == zx::Type::POINTER)
+										{
+											if (exp->pointerNum == pointerTypeSpecify->pointerAST->starNum)
+											{
+												if (exp->finalToType == pointerTypeSpecify->directTypeSpecifyAST->type->type)
+												{
+													if (exp->expType == zx::Type::STRUCT)
+													{
+														if (exp->structName == pointerTypeSpecify->directTypeSpecifyAST->structNameIdentifier->identifier)
+														{
+															if (j == rparaList->realParaItemASTs->size() - 1)
+															{
+																find = true;
+																funcCallStmt->retTypeSpecify = funcTypeAST;
+																break;
+															}
+															continue;
+														}
+														else
+														{
+															break;
+														}
+													}
+													else
+													{
+														if (j == rparaList->realParaItemASTs->size() - 1)
+														{
+															find = true;
+															funcCallStmt->retTypeSpecify = funcTypeAST;
+															break;
+														}
+														continue;
+													}
+												}
+												else
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														break;
+													}
+													continue;
+												}
+											}
+											else
+											{
+												break;
+											}
+										}
+										else
+										{
+											break;
+										}
+									}
+
+								}
+								if (!find) {
+									throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+								}
+							}
+							else {
+								throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+							}
+						}
+						else {
+							if (funcFparaList->formalParaItemASTs != nullptr && funcFparaList->formalParaItemASTs->size() != 0) {
+								throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+							}
 						}
 					}
 					else

@@ -81,8 +81,6 @@ Value* FuncDefineAST::codegen() {
 		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
 		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
 		Arg.setName(name);
-		//AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, Arg.getName());  // toy4   1077 row
-		Params[name] = &Arg;
 	}
 
 	// Create a new basic block to start insertion into.
@@ -90,6 +88,17 @@ Value* FuncDefineAST::codegen() {
 	/*BasicBlock* BB = BasicBlock::Create(TheContext, "entry", currentFun);*/
 	Builder.SetInsertPoint(BB);
 
+
+
+	for (auto& Arg : currentFun->args()) {
+		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
+		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
+		string pName = name + ".addr";
+		AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, pName, Arg.getType());
+		Params[name] = &Arg;
+		Params[pName] = Alloca;
+		Builder.CreateStore(Params[name], Params[pName]);
+	}
 	////冯文翰于11.12日 18：52添加
 	//BasicBlock* RetBB = BasicBlock::Create(TheContext, "RetBB", currentFun);
 	//currentRetBB = RetBB;
