@@ -70,6 +70,8 @@ void ProgramAST::RunJIT()
 
     /*double (*FP)() = (double (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
 	fprintf(stderr, "main exited with value %f\n", FP());*/
+
+
 	int (*FP)() = (int (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
 	fprintf(stderr, "main exited with code %d\n", FP());
 
