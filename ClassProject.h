@@ -99,26 +99,26 @@ extern Value* currentRetValue;
 extern PHINode* currentRetPN;
 
 //debug part
-DIBuilder* DBuilder = nullptr;
-struct DebugInfo {
-	DICompileUnit* TheCU = nullptr;
-	DIType* DblTy = nullptr;
-	DIType* IntTy = nullptr;
-
-	DIType* getDoubleTy() {
-		if (DblTy)
-			return DblTy;
-
-		DblTy = DBuilder->createBasicType("real", 64, dwarf::DW_ATE_float);
-		return DblTy;
-	}
-	DIType* getIntegerTy() {//unfinished
-		if (IntTy)
-			return IntTy;
-		//IntTy = DBuilder->createBasicType("int", 32, dwarf::DW_ATE_i)
-		return IntTy;
-	}
-};
-
-extern DebugInfo DbgInfo;
+//DIBuilder* DBuilder = nullptr;
+//struct DebugInfo {
+//	DICompileUnit* TheCU = nullptr;
+//	DIType* DblTy = nullptr;
+//	DIType* IntTy = nullptr;
+//
+//	DIType* getDoubleTy() {
+//		if (DblTy)
+//			return DblTy;
+//
+//		DblTy = DBuilder->createBasicType("real", 64, dwarf::DW_ATE_float);
+//		return DblTy;
+//	}
+//	DIType* getIntegerTy() {//unfinished
+//		if (IntTy)
+//			return IntTy;
+//		//IntTy = DBuilder->createBasicType("int", 32, dwarf::DW_ATE_i)
+//		return IntTy;
+//	}
+//};
+//
+//extern DebugInfo DbgInfo;
 
