@@ -3,11 +3,11 @@
 #include <cstring>
 #include <atlstr.h>
 using namespace std;
-
+using namespace zx;
 int MyLexer::keyNum = 11;
 Token MyLexer::keyTokens[] = { Void,Int,Real,Char,Struct,If,Else,While,Return,Continue,Break};
 string MyLexer::keyWords[] = {"void","int","real","char","struct","if","else","while","return","continue","break"};
-
+using namespace zx;
 Token MyLexer::inKey(string str)
 {
 	for (int i = 0; i < keyNum; i++)
@@ -476,7 +476,7 @@ void MyLexer::buildSymbols()
 			{
 				symPointer = new Symbol();
 				symPointer->row = row;
-				symPointer->token = Token::MoreOrEq;
+				symPointer->token = zx::Token::MoreOrEq;
 				symPointer->value = ">=";
 				i += 2;
 			}

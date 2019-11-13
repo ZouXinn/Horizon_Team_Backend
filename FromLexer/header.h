@@ -1,5 +1,5 @@
 #pragma once
-//namespace zx {
+namespace zx {
 	enum Token {
 		// жу╫А╥Ш
 		Plus,// +
@@ -48,7 +48,7 @@
 		End,//$
 		Not// !
 	};
-//};
+};
 
 
 
