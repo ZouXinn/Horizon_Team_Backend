@@ -46,7 +46,7 @@ AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 			return NamedValues[ts];
 		}
 	}
-	string pts = substr + to_string(1);
+	string pts = substr + to_string(1)+".addr";
 	if (Params.count(pts) == 1){
 		return ((AllocaInst*)Params[pts]);
 	}
@@ -185,4 +185,9 @@ extern "C" DLLEXPORT void writeInt(int i) {
 extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
+
+BasicBlock* currentRetBB;
+Value* currentRetValue;
+PHINode* currentRetPN;
+
 

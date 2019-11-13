@@ -135,7 +135,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -164,7 +164,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -193,7 +193,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -227,7 +227,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			BothIsInterger = true;
@@ -268,7 +268,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -298,7 +298,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -327,7 +327,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -360,7 +360,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -389,7 +389,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -418,7 +418,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
@@ -447,7 +447,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			Val = Builder.CreateAnd(LVar, RVar);
@@ -460,7 +460,7 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
 				LVar = Builder.CreateLoad(LVar);
 			}
-			if (AllocaInst::classof(RVar) || GlobalVariable::classof(LVar)) {
+			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
 			Val = Builder.CreateOr(LVar, RVar);

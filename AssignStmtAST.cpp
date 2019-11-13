@@ -79,9 +79,15 @@ Value* AssignStmtAST::codegen()
 			expVal = expAST->codegen();
 			//如果varName是 AllocaInst*,而expVal不是AllocaInst*，代表应该
 			//Val = Builder.CreateStore(expVal, varNameVal);
-			if (AllocaInst::classof(varNameVal) && !AllocaInst::classof(expVal)) {
+
+			if (GlobalVariable::classof(expVal)) {
+				expVal = Builder.CreateLoad(expVal);
+			}
+
+
+			if (AllocaInst::classof(varNameVal) && !AllocaInst::classof(expVal)&&!GlobalVariable::classof(expVal)) {
 				//类型转换?
-				if (((AllocaInst*)varNameVal)->getAllocatedType()->isDoubleTy() && expVal->getType()->isIntegerTy()) {
+				if (((AllocaInst*)varNameVal)->getAllocatedType()->isDoubleTy()) {
 					expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
 				}
 				Val = Builder.CreateStore(expVal, varNameVal);
@@ -107,24 +113,31 @@ Value* AssignStmtAST::codegen()
 				}
 				Builder.CreateStore(expVal, varNameVal);
 			}
-			else if (Argument::classof(varNameVal)) {
+			/*else if (Argument::classof(varNameVal)) {//应该不会到
 				if (((Argument*)varNameVal)->getType()->isDoubleTy()) {
 					if (expVal->getType()->isIntegerTy()) {
 						expVal = Builder.CreateSIToFP(expVal, Type::getDoubleTy(TheContext));
 					}
-					varNameVal = Builder.CreateAdd(expVal, ConstantFP::get(TheContext, APFloat(0.0)));
+					Builder.CreateStore(expVal, varNameVal);
+					//varNameVal = Builder.CreateAdd(expVal, ConstantFP::get(TheContext, APFloat(0.0)));
 					//Params[varNameVal->getName()] = varNameVal;
 				}
 				else {
-					varNameVal = Builder.CreateAdd(expVal, varNameVal);
-					expVal->print(errs()); cout << endl;
-					varNameVal->print(errs()); cout << endl;
+					//varNameVal = Builder.CreateAdd(expVal, varNameVal);
+					//Value* size = ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 32));
+					//Builder.CreateMemCpy(varNameVal, 0, expVal,0,size);
+
+					//Builder.Create
+					Builder.CreateStore(expVal, varNameVal);
+					
+					//expVal->print(errs()); cout << endl;
+					//varNameVal->print(errs()); cout << endl;
 					//Params[varNameVal->getName()] = varNameVal;
 				}
 				//Builder.Create
 				//Builder.CreateStore(expVal, varNameVal);
-			}
-
+			}*/
+			
 
 
 			//if (varNameVal->getType() == varNameVal->getType()->getPointerTo()) {
