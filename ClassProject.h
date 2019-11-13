@@ -6,6 +6,7 @@
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -84,6 +85,9 @@ struct IdItem
 	Value* val;
 };
 
+
+
+
 static int currentType;
 
 extern int testInt;
@@ -94,5 +98,27 @@ extern BasicBlock* currentRetBB;
 extern Value* currentRetValue;
 extern PHINode* currentRetPN;
 
+//debug part
+DIBuilder* DBuilder = nullptr;
+struct DebugInfo {
+	DICompileUnit* TheCU = nullptr;
+	DIType* DblTy = nullptr;
+	DIType* IntTy = nullptr;
 
+	DIType* getDoubleTy() {
+		if (DblTy)
+			return DblTy;
+
+		DblTy = DBuilder->createBasicType("real", 64, dwarf::DW_ATE_float);
+		return DblTy;
+	}
+	DIType* getIntegerTy() {//unfinished
+		if (IntTy)
+			return IntTy;
+		//IntTy = DBuilder->createBasicType("int", 32, dwarf::DW_ATE_i)
+		return IntTy;
+	}
+};
+
+extern DebugInfo DbgInfo;
 
