@@ -258,6 +258,30 @@ AST* MyParser::pop()
 	stackTop--;
 	return ret;
 }
+bool expConst(ExpAST* exp) {
+	if (exp->type == 0 || exp->type == 2) {
+		while (exp->type == 0) {
+			exp = exp->left;
+		}
+		if (exp->type != 2) {
+			return false;
+		}
+		return true;
+	}
+	else if(exp->type == 1){
+		if (expConst(exp->left) && expConst(exp->right)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
+}
+
+
 void funcDataHandle(TypeSpecifyAST*& funcTypeAST, IdentifierAST*& funcId, FormalParaListAST*& funcFparaList, int& state, Token token)
 {
 	switch (state)//0 表示开始 ， 1表示移进type ， 2表示移进id ，3表示移进了(,确认了此为函数定义
@@ -583,7 +607,7 @@ void MyParser::Parse()
 				ast = new IdentifierAST(value);
 				ast->setRow(row);
 				this->push(ast, action.aim);
-				if (curLevel == 0)
+				if (curLevel == 0 && state != 3)
 				{
 					funcId = (IdentifierAST*)ast;
 				}
@@ -1306,6 +1330,24 @@ void MyParser::Parse()
 				
 				//静态语义检查 start
 #ifdef STATIC
+				if (curLevel == 0 || funcId == nullptr) {
+					for (int i = 0; i < idList->idItemASTs->size(); i++) {
+						IdItemAST* item = idList->idItemASTs->at(i);
+						if (item->exp != nullptr) {
+							if (!expConst(item->exp)) {
+								throw Exception(StaticSemaEx, item->row, "全局变量只能用常量赋值!");
+							}
+						}
+						else if (item->exps != nullptr) {
+							for (int j = 0; j < item->exps->exps->size(); j++) {
+								ExpAST* exp = item->exps->exps->at(j);
+								if (!expConst(exp)) {
+									throw Exception(StaticSemaEx, item->row, "全局变量只能用常量赋值!");
+								}
+							}
+						}
+					}
+				}
 				if (typeSpecify->son == 0)//非指针
 				{
 					DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)typeSpecify;
@@ -2047,6 +2089,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				GoTo(tree, "<dec_var_name>");
 			}
@@ -2061,6 +2104,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id, true);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				delete rS;
 				delete lS;
@@ -2079,6 +2123,7 @@ void MyParser::Parse()
 				//create <dec_var_name>
 				DecVarNameAST* decVarName = new DecVarNameAST(id, true,integer);
 				decVarName->setRow(id->row);
+				decVarName->setLevel(curLevel);
 				tree = decVarName;
 				delete rS;
 				delete lS;
@@ -2491,9 +2536,9 @@ void MyParser::Parse()
 					{
 						VarIndex index;
 						index.name = id->identifier;
-						index.funcName = i==0?"":funcId->identifier;
+						index.funcName = (i==0||funcId==nullptr)?"":funcId->identifier;
 						index.level = i;
-						index.formalParaList = i == 0?nullptr:funcFparaList;
+						index.formalParaList = (i == 0|| funcFparaList == nullptr)?nullptr:funcFparaList;
 						if (var_table->count(index) == 0)
 						{
 							continue;
@@ -2528,6 +2573,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(id->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				GoTo(tree, "<var_name>");
 			}
@@ -2616,6 +2662,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete op;
 				GoTo(tree, "<var_name>");
@@ -2671,6 +2718,7 @@ void MyParser::Parse()
 #endif // STATIC
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				GoTo(tree, "<var_name>");
 			}
@@ -2750,6 +2798,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(op->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete op;
 				GoTo(tree, "<var_name>");
@@ -2780,8 +2829,8 @@ void MyParser::Parse()
 					bool find = false;
 					for (int i = curLevel; i >= 0; i--)
 					{
-						index.funcName = i == 0 ? "" : funcId->identifier;
-						index.formalParaList = i == 0 ? nullptr : funcFparaList;
+						index.funcName = (i == 0|| funcId == nullptr) ? "" : funcId->identifier;
+						index.formalParaList = (i == 0||funcFparaList==nullptr) ? nullptr : funcFparaList;
 						index.level = i;
 						if (var_table->count(index) == 0)
 						{
@@ -2889,6 +2938,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				varName->setRow(leftName->row);
+				varName->setLevel(curLevel);
 				tree = varName;
 				delete lS;
 				delete rS;
@@ -2995,6 +3045,7 @@ void MyParser::Parse()
 				VarDecAST* varDec = (VarDecAST*)pop();
 				//set son = 7
 				varDec->son = 7;
+				varDec->setLevel(curLevel);
 				tree = varDec;
 				GoTo(tree, "<stmt>");
 			}
@@ -3016,6 +3067,7 @@ void MyParser::Parse()
 				OtherSymAST* ifSym = (OtherSymAST*)pop();
 				//create <if_stmt>
 				IfStmtAST* ifStmt = new IfStmtAST(exp, stmts);
+				ifStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3055,6 +3107,7 @@ void MyParser::Parse()
 				OtherSymAST* ifSym = (OtherSymAST*)pop();
 				//create <if_stmt>
 				IfStmtAST* ifElseStmt = new IfStmtAST(exp, thenStmts,elseStmts);
+				ifElseStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3086,6 +3139,7 @@ void MyParser::Parse()
 				OtherSymAST* whileSym = (OtherSymAST*)pop();
 				//create <while_stmt>
 				WhileStmtAST* whileStmt = new WhileStmtAST(exp, stmts);
+				whileStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (exp->expType != zx::Type::INT)
@@ -3118,6 +3172,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				assignStmt->setRow(semi->row);
+				assignStmt->setLevel(curLevel);
 				tree = assignStmt;
 				delete semi;
 				GoTo(tree, "<assign_stmt>");
@@ -3141,6 +3196,7 @@ void MyParser::Parse()
 #endif
 				//静态语义检查 end
 				assignStmt->setRow(semi->row);
+				assignStmt->setLevel(curLevel);
 				tree = assignStmt;
 				delete semi;
 				GoTo(tree, "<assign_stmt>");
@@ -3157,6 +3213,7 @@ void MyParser::Parse()
 				VarNameAST* varName = (VarNameAST*)pop();
 				//create <assign_stmt>
 				AssignStmtAST* assignStmt = new AssignStmtAST(varName, exp);
+				assignStmt->setLevel(curLevel);
 				//静态语义检查 start
 #ifdef STATIC
 				//是不是数组的问题?        <exp>不可能是数组
@@ -3213,6 +3270,7 @@ void MyParser::Parse()
 				OtherSymAST* returnSym = (OtherSymAST*)pop();
 				//create <return_stmt>
 				ReturnStmtAST* returnStmt = new ReturnStmtAST();
+				returnStmt->setLevel(curLevel);
 				//静态语义分析 start
 #ifdef STATIC
 				if (funcTypeAST != nullptr)
@@ -3243,6 +3301,7 @@ void MyParser::Parse()
 				OtherSymAST* returnSym = (OtherSymAST*)pop();
 				//create <return_stmt>
 				ReturnStmtAST* returnStmt = new ReturnStmtAST(exp);
+				returnStmt->setLevel(curLevel);
 #ifdef STATIC
 				if (funcTypeAST != nullptr)
 				{
@@ -3307,6 +3366,7 @@ void MyParser::Parse()
 				//create <break_stmt>
 				BreakStmtAST* breakStmt = new BreakStmtAST();
 				breakStmt->setRow(breakSym->row);
+				breakStmt->setLevel(curLevel);
 				tree = breakStmt;
 				delete semi; delete breakSym;
 				GoTo(tree, "<break_stmt>");
@@ -3320,6 +3380,7 @@ void MyParser::Parse()
 				//create <continue_stmt>
 				ContinueStmtAST* continueStmt = new ContinueStmtAST();
 				continueStmt->setRow(continueSym->row);
+				continueStmt->setLevel(curLevel);
 				tree = continueStmt;
 				delete semi; delete continueSym;
 				GoTo(tree, "<continue_stmt>");
@@ -3915,9 +3976,9 @@ void MyParser::Parse()
 					for (int i = curLevel; i >= 0; i--)
 					{
 						VarIndex index;
-						index.formalParaList = i==0?nullptr:funcFparaList;
+						index.formalParaList = (i==0||funcFparaList==nullptr)?nullptr:funcFparaList;
 						index.level = i;
-						index.funcName = i == 0 ? "" : funcId->identifier;
+						index.funcName = (i == 0|| funcId == nullptr) ? "" : funcId->identifier;
 						index.name = varName->identifier->identifier;
 						if (var_table->count(index) == 0)
 						{
@@ -4224,6 +4285,145 @@ void MyParser::Parse()
 						if (!find)
 						{
 							throw Exception(StaticSemaEx, lP->row, "函数参数列表类型不匹配");
+						}
+					}
+					else if(funcName == funcId->identifier){
+						if (rparaList->realParaItemASTs != nullptr ) {
+							if (funcFparaList->formalParaItemASTs != nullptr) {
+								bool find = false;
+								for (int j = 0; j < rparaList->realParaItemASTs->size(); j++)
+								{
+									FormalParaItemAST* fParaItem = funcFparaList->formalParaItemASTs->at(j);
+									RealParaItemAST* rParaItem = rparaList->realParaItemASTs->at(j);
+									ExpAST* exp = rParaItem->expAST;
+									if (fParaItem->typeSpecifyAST->son == 0)
+									{
+										if (exp->expType != zx::Type::POINTER)
+										{
+											DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+											if (exp->expType == dtypeSpecify->type->type)
+											{
+												if (exp->expType == zx::Type::STRUCT)
+												{
+													if (exp->structName == dtypeSpecify->structNameIdentifier->identifier)
+													{
+														if (j == rparaList->realParaItemASTs->size() - 1)
+														{
+															find = true;
+															funcCallStmt->retTypeSpecify = funcTypeAST;
+															break;
+														}
+														continue;
+													}
+													else
+													{
+														break;
+													}
+												}
+												else
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														funcCallStmt->retTypeSpecify = funcTypeAST;
+														break;
+													}
+													continue;
+												}
+											}
+											else
+											{
+												if (dtypeSpecify->type->type == zx::Type::REAL && exp->expType == zx::Type::INT)
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														find = true;
+														funcCallStmt->retTypeSpecify = funcTypeAST;
+														break;
+													}
+													continue;
+												}
+												else
+												{
+													break;
+												}
+											}
+										}
+										else
+										{
+											break;
+										}
+									}
+									else//指针类型
+									{
+										PointerTypeSpecifyAST* pointerTypeSpecify = (PointerTypeSpecifyAST*)(fParaItem->typeSpecifyAST);
+										if (exp->expType == zx::Type::POINTER)
+										{
+											if (exp->pointerNum == pointerTypeSpecify->pointerAST->starNum)
+											{
+												if (exp->finalToType == pointerTypeSpecify->directTypeSpecifyAST->type->type)
+												{
+													if (exp->expType == zx::Type::STRUCT)
+													{
+														if (exp->structName == pointerTypeSpecify->directTypeSpecifyAST->structNameIdentifier->identifier)
+														{
+															if (j == rparaList->realParaItemASTs->size() - 1)
+															{
+																find = true;
+																funcCallStmt->retTypeSpecify = funcTypeAST;
+																break;
+															}
+															continue;
+														}
+														else
+														{
+															break;
+														}
+													}
+													else
+													{
+														if (j == rparaList->realParaItemASTs->size() - 1)
+														{
+															find = true;
+															funcCallStmt->retTypeSpecify = funcTypeAST;
+															break;
+														}
+														continue;
+													}
+												}
+												else
+												{
+													if (j == rparaList->realParaItemASTs->size() - 1)
+													{
+														break;
+													}
+													continue;
+												}
+											}
+											else
+											{
+												break;
+											}
+										}
+										else
+										{
+											break;
+										}
+									}
+
+								}
+								if (!find) {
+									throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+								}
+							}
+							else {
+								throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+							}
+						}
+						else {
+							if (funcFparaList->formalParaItemASTs != nullptr && funcFparaList->formalParaItemASTs->size() != 0) {
+								throw Exception(StaticSemaEx, id->row, "函数参数列表类型不匹配");
+							}
 						}
 					}
 					else

@@ -64,8 +64,11 @@ Value* FuncDefineAST::codegen() {
 	if (type->isDoubleTy()) {
 		FT = FunctionType::get(Type::getDoubleTy(TheContext), params, false);
 	}
-	if (type->isIntegerTy()) {
+	else if (type->isIntegerTy()) {
 		FT = FunctionType::get((Type*)Type::getInt32Ty(TheContext), params, false);
+	}
+	else if (type->isVoidTy()) {
+		FT = FunctionType::get((Type*)Type::getVoidTy(TheContext), params, false);
 	}
 
 	currentFun = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
@@ -86,9 +89,74 @@ Value* FuncDefineAST::codegen() {
 	Builder.SetInsertPoint(BB);
 
 
+
+	for (auto& Arg : currentFun->args()) {
+		int i = this->formalParaListAST->formalParaItemASTs->size() - 1 - Arg.getArgNo();
+		string name = this->formalParaListAST->formalParaItemASTs->at(i)->codegenName();
+		string pName = name + ".addr";
+		AllocaInst* Alloca = CreateEntryBlockAlloca(currentFun, pName, Arg.getType());
+		Params[name] = &Arg;
+		Params[pName] = Alloca;
+		Builder.CreateStore(Params[name], Params[pName]);
+	}
+	////冯文翰于11.12日 18：52添加
+	//BasicBlock* RetBB = BasicBlock::Create(TheContext, "RetBB", currentFun);
+	//currentRetBB = RetBB;
+	//Type* retType = FT->getReturnType();
+	//if (retType->isIntegerTy()) {
+	//	currentRetValue = ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
+	//}
+	//else if (retType->isDoubleTy()) {
+	//	currentRetValue = ConstantFP::get(TheContext, APFloat(0.0));
+	//}
+	//PHINode* PN = Builder.CreatePHI(Type::getDoubleTy(TheContext), 2, "rettmp");
+
+	//liu start
 	if (Value* RetVal = stmtsAST->codegen()) {
 
-		Builder.CreateRet(RetVal);
+		//Builder.CreateRet(RetVal);
+
+		//冯文翰于11.11 0：02注释
+		/*Type* retType = FT->getReturnType();
+		if (retType->isIntegerTy()) {
+			Builder.CreateRet(ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0)));
+		}
+		else if (retType->isDoubleTy()) {
+			Builder.CreateRet(ConstantFP::get(TheContext, APFloat(0.0)));
+		}
+		else if (retType->isVoidTy()) {
+			Builder.CreateRetVoid();
+		}*/
+		/*Type* retType = FT->getReturnType();
+		if (retType->isVoidTy()) {
+			Builder.CreateRetVoid();
+		}*/
+
+		//冯文翰于11.12日 19：03修改
+		//参考https://stackoverflow.com/questions/53632131/compiler-how-to-check-a-user-function-returns-properly
+		//当stmts生成完时，检查每一个BaickBlock，如果没有终结标志就添加ret
+		//对于使用者写的ret太多的情况，再stmtsAST和if,while语句中分别处理，使得遇到第一个return后便不再继续生成IR代码
+
+		Type* retType = FT->getReturnType();
+		for (BasicBlock& BB : currentFun->getBasicBlockList()) {
+			Instruction* Terminator = BB.getTerminator();
+			if (Terminator != nullptr) continue; /// Well-formed
+			if (retType->isVoidTy()) {
+				/// Make implicit return of void Function explicit.
+				Builder.SetInsertPoint(&BB);
+				Builder.CreateRetVoid();
+			}
+			else if (retType->isIntegerTy()){
+				Builder.SetInsertPoint(&BB);
+				Builder.CreateRet(ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0)));
+			}
+			else if (retType->isDoubleTy())
+			{
+				Builder.SetInsertPoint(&BB);
+				Builder.CreateRet(ConstantFP::get(TheContext, APFloat(0.0)));
+			}
+		}
+
 
 		currentFun = Builder.GetInsertBlock()->getParent();
 
@@ -97,8 +165,22 @@ Value* FuncDefineAST::codegen() {
 		currentFun = NULL;
 		return nullptr;
 	}
+	//liu end
+
+	//zx start
+	/*stmtsAST->codegen();
+	currentFun = Builder.GetInsertBlock()->getParent();
+
+	verifyFunction(*currentFun);
+	currentFun->print(errs());
+	currentFun = NULL;
+	return nullptr;*/
+
+	//zx end
+
 
 	//// Error reading body, remove function.
 	currentFun->eraseFromParent();
 	return nullptr;
 }
+

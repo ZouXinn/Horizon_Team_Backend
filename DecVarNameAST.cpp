@@ -38,5 +38,10 @@ DecVarNameAST::~DecVarNameAST()
 
 string DecVarNameAST::codegenStr()
 {
-	return identifier->codegenStr();
+	return identifier->codegenStr()+"__"+to_string(level);
+}
+
+string DecVarNameAST::codegenParamName()
+{
+	return identifier->codegenStr() + "__" + to_string(1);
 }

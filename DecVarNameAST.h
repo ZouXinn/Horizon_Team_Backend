@@ -14,5 +14,11 @@ public:
 	DecVarNameAST(IdentifierAST* identifier, bool LSRS, IntAST* intAST);
 	virtual ~DecVarNameAST();
 	string codegenStr();
+	string codegenParamName();
+
+	int level = 0;
+	void setLevel(int lv) {
+		this->level = lv;
+	}
 };
 

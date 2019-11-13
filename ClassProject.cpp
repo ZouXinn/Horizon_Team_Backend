@@ -4,6 +4,10 @@ LLVMContext TheContext;
 std::unique_ptr<Module> TheModule;
 
 std::map<std::string, AllocaInst*> NamedValues;
+std::map<std::string, AllocaInst*> GlobalValues;
+std::map<std::string, GlobalVariable*> GV;
+std::map<std::string, Value*> Params;
+
 map<string, int*> testMap;
 IRBuilder<> Builder(TheContext);
 
@@ -16,6 +20,50 @@ AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 			TheFunction->getEntryBlock().begin());
 		return std::move(TmpB.CreateAlloca(llvm::Type::getInt32Ty(TheContext), nullptr,
 			VarName.c_str()));
+	}
+}
+
+
+AllocaInst* getHighestValue(string str) //∑µªÿAllocaInst*
+{
+	int i = str.length();
+	for (; i >= 0; i--) {
+		if (str[i] == '_' && i > 0 && str[i-1] == '_') {
+			break;
+		}
+	}
+	i++;
+	string substr = str.substr(0, i);
+	int num = 0;
+	for (; i < str.length(); i++) {
+		num *= 10;
+		num += str[i] - '0';
+	}
+	for (; num >= 1; num--)
+	{
+		string ts = substr + to_string(num);
+		if (NamedValues.count(ts) == 1) {//’“µΩ
+			return NamedValues[ts];
+		}
+	}
+	string pts = substr + to_string(1)+".addr";
+	if (Params.count(pts) == 1){
+		return ((AllocaInst*)Params[pts]);
+	}
+	string ts = substr + to_string(num);
+	if (GV.count(ts) == 1) {
+		//return GlobalValues[ts];
+		/*if (AllocaInst::classof(GV[ts])) {
+			return ((AllocaInst*)GV[ts]);
+		}
+		else {
+			return ((AllocaInst*)GV[ts]);
+		}*/
+		//return AlGV[ts];
+		return ((AllocaInst*)GV[ts]);
+	}
+	else {
+		return nullptr;
 	}
 }
 
@@ -103,11 +151,12 @@ BasicBlock* updateBB()
 	/*InitializeModule();*/
 	InitializeModuleAndPassManager();
 
-	currentFunType = FunctionType::get(llvm::Type::getVoidTy(TheContext),
+	/*currentFunType = FunctionType::get(llvm::Type::getVoidTy(TheContext),
 		{ llvm::Type::getInt32Ty(TheContext) }, false);
 	currentFun = Function::Create(currentFunType, Function::ExternalLinkage, "VarDec", *TheModule);
 	BB = BasicBlock::Create(TheContext, "EntryBlock", currentFun);
 	Builder.SetInsertPoint(BB);
+	return BB;*/
 	return BB;
 }
 
@@ -136,4 +185,9 @@ extern "C" DLLEXPORT void writeInt(int i) {
 extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
+
+BasicBlock* currentRetBB;
+Value* currentRetValue;
+PHINode* currentRetPN;
+
 
