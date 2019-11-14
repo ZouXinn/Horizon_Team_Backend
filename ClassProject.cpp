@@ -7,7 +7,8 @@ std::map<std::string, AllocaInst*> NamedValues;
 std::map<std::string, AllocaInst*> GlobalValues;
 std::map<std::string, GlobalVariable*> GV;
 std::map<std::string, Value*> Params;
-
+std::map<FunIndex, string> FuncNames;
+std::map <string, Function*> Funcs;
 map<string, int*> testMap;
 IRBuilder<> Builder(TheContext);
 
@@ -23,7 +24,14 @@ AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 	}
 }
 
-
+//inline bool operator < (const struct FunIndex& FI1, const struct FunIndex& FI2) {
+//	if (FI1.FN != FI2.FN) {
+//		return FI1.FN < FI2.FN;
+//	}
+//	else {
+//		return FI1.PR < FI2.PR;
+//	}
+//}
 AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 {
 	int i = str.length();
@@ -160,7 +168,6 @@ BasicBlock* updateBB()
 	return BB;
 }
 
-
 #ifdef _WIN32
 #define DLLEXPORT __declspec(dllexport)
 #else
@@ -177,7 +184,6 @@ extern "C" DLLEXPORT double readDouble() {
 	fscanf(stdin, "%f", &inputDouble);
 	return inputDouble;
 }
-
 ///write
 extern "C" DLLEXPORT void writeInt(int i) {
 	fprintf(stdout, "%d\n", i);
@@ -186,6 +192,9 @@ extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
 
+//extern "C" DLLEXPORT void writeStr(string str) {
+//	fprintf(stdout, "%s\n", str);
+//}
 BasicBlock* currentRetBB;
 Value* currentRetValue;
 PHINode* currentRetPN;

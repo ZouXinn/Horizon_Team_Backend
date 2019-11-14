@@ -74,6 +74,24 @@ Value* FuncDefineAST::codegen() {
 	currentFun = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
 	/*currentFun = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());*/
 
+	//处理重名函数问题 start    zx
+	string FN = currentFun->getName();
+	string MyPR = "";
+	for (int i = 0; i < params.size(); i++) {
+		Type* type = params[i];
+		if (type->isIntegerTy()) {
+			MyPR += 'i';
+		}
+		else if (type->isDoubleTy()) {
+			MyPR += 'r';
+		}
+	}
+	FunIndex funIndex;
+	funIndex.FN = Name;
+	funIndex.PR = MyPR;
+	FuncNames[funIndex] = FN;
+	Funcs[FN] = currentFun;
+	//处理重名函数问题 end
 
 	unsigned Idx = 0;
 	/*for (auto& Arg : F->args()) {*/

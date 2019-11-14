@@ -103,7 +103,9 @@ Value* FuncCallStmtAST::codegen()
 		}
 	}
 	else {//其他函数正常调用
-		func = TheModule->getFunction(funcName);
+		//func = TheModule->getFunction(funcName);
+		FunIndex funIndex;
+		string MyPR = "";
 		//ArrayRef<Value*> rparams = this->realParaListAST->codegenArr();
 		vector<Value*> rparamsVec = this->realParaListAST->codegenVec();
 		for (int i = 0; i < rparamsVec.size(); i++) {
@@ -111,6 +113,18 @@ Value* FuncCallStmtAST::codegen()
 				rparamsVec[i] = Builder.CreateLoad(rparamsVec[i]);
 			}
 		}
+		for (int i = 0; i < rparamsVec.size(); i++) {
+			if (rparamsVec[i]->getType()->isIntegerTy()) {
+				MyPR += 'i';
+			}
+			else if(rparamsVec[i]->getType()->isDoubleTy()){
+				MyPR += 'r';
+			}
+		}
+		funIndex.FN = funcName;
+		funIndex.PR = MyPR;
+		string MyFuncName = FuncNames[funIndex];
+		func = Funcs[MyFuncName];
 		Val = Builder.CreateCall(func, rparamsVec, "calltmp");
 	}
 	return Val;

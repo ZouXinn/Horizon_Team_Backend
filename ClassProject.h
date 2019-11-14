@@ -85,9 +85,23 @@ struct IdItem
 	Value* val;
 };
 
+struct FunIndex {
+	string FN = "";
+	string PR = "";
+	friend bool operator < (const struct FunIndex& FI1, const struct FunIndex& FI2) {
+		if (FI1.FN != FI2.FN) {
+			return FI1.FN < FI2.FN;
+		}
+		else {
+			return FI1.PR < FI2.PR;
+		}
+	}
+};
 
 
+extern map<FunIndex, string> FuncNames;
 
+extern std::map <string, Function*> Funcs;
 static int currentType;
 
 extern int testInt;
