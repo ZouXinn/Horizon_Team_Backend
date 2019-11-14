@@ -16,7 +16,20 @@ void testParser()
 {
 	const char* sourceCodePath = "..//Files//sourceCode.txt";
 	try {
-		MyParser* parser = new MyParser(sourceCodePath, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",true);
+		//MyParser* parser = new MyParser(sourceCodePath, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty",true);
+		//char* sourceCode;
+		string sourceCode;
+		char a;
+		cin.get(a);
+		while (!cin.eof())
+		{		
+			sourceCode += a;
+			cin.get(a);
+		}
+		//cin.ignore();
+		
+		//cin >> sourceCode;
+		MyParser* parser = new MyParser(sourceCode.c_str());
 		parser->Parse();
 		parser->CodeGen();
 		parser->RunJIT();

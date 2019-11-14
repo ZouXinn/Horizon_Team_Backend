@@ -205,5 +205,7 @@ public:
 	void Parse();
 	void CodeGen();
 	void RunJIT();
+
+	MyParser(const char* sourceCode);
 };
 

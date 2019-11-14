@@ -145,6 +145,29 @@ MyParser::MyParser(const char* sourceCodeFile, const char* SLR1File, const char*
 	var_table = new map<VarIndex, Variable*>();
 }
 
+MyParser::MyParser(const char* sourceCode) {
+	SLR1_table = MyParser::readSLR1Table("..//Files//SLR1.txt");
+	symStack = new vector<AST*>();
+	stateStack = new vector<int>();
+	productions = Reader::readProductions("..//Files//MyProductions.txt");
+	readpro2index("..//Files//MyProductions.txt");
+	var_table = new map<VarIndex, Variable*>();
+	MyLexer* lexer = nullptr;
+
+	try {
+		lexer = new MyLexer(sourceCode, false);
+		sourceSymList = lexer->getSymbols();
+	}
+	catch (Exception e) {
+		throw e;
+	}
+
+	initToken2StrP();
+	definedStructs = new map<string, StructDecAST*>();
+	definedFuncs = new map<string, vector<FuncDefineAST*>>();
+	var_table = new map<VarIndex, Variable*>();
+}
+
 
 void MyParser::readpro2index(const char* proFileName)
 {
