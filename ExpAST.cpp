@@ -506,18 +506,8 @@ Value* ExpAST::codegen() {
 		
 
 
-		if (Val->getType()->isArrayTy()) {
-			if (Val->getType()->getArrayElementType()->isIntegerTy()) {//int[]
-				cout << 1;
-			}
-			else if (Val->getType()->getArrayElementType()->isDoubleTy()) {//real[]
-				cout << 2;
-			}
-			//else if()
-		}
-
-		Val->print(errs());
-		cout << "\n";
+		/*Val->print(errs());
+		cout << "\n";*/
 		return Val;
 	case 4:
 		return this->funcCallStmtAST->codegen();
