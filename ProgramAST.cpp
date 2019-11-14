@@ -64,7 +64,6 @@ void ProgramAST::RunJIT()
 	auto ExprSymbol = TheJIT->findSymbol("main");
 	assert(ExprSymbol && "未找到main函数");//到时候应该要修改
 
-
 	// Get the symbol's address and cast it to the right type (takes no
 	// arguments, returns a double) so we can call it as a native function.
 
