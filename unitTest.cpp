@@ -41,3 +41,19 @@ void testParser2()
 	}
 	system("pause");
 }
+
+
+void testParser3(char * code)
+{
+	try {
+		MyParser* parser = new MyParser(code, "..//Files//SLR1.txt", "..//Files//MyProductions.txt", "empty", false);
+		parser->Parse();
+		parser->CodeGen();
+		parser->RunJIT();
+	}
+	catch (Exception e)
+	{
+		cout << e.print();
+	}
+	system("pause");
+}

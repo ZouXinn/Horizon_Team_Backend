@@ -35,7 +35,7 @@ Value* WhileStmtAST::codegen()
 
 	Builder.SetInsertPoint(ExpBB);
 	Value* a = expAST->codegen();
-	if (AllocaInst::classof(a)) {
+	if (AllocaInst::classof(a)||GlobalVariable::classof(a)) {
 		a = Builder.CreateLoad(a);
 	}
 	Value* b = Builder.CreateICmpNE(a, ConstantInt::get(TheContext, APInt(32, 0)));

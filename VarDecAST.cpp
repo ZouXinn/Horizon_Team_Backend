@@ -157,7 +157,7 @@ Value* VarDecAST::codegen() {
 					Value* vectorValue = Builder.CreateLoad(c);
 					for (int i = 0; i < noneConstIndex.size(); i++) {
 						Value* noneConstValue = noneConstVector[i];
-						if (AllocaInst::classof(noneConstValue)) {
+						if (AllocaInst::classof(noneConstValue)||GlobalVariable::classof(noneConstValue)) {
 							noneConstValue = Builder.CreateLoad(noneConstValue);
 						}
 						int index = noneConstIndex[i];

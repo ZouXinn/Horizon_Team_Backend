@@ -36,6 +36,9 @@ Value* IfStmtAST::codegen()
 	if (elseStmts == nullptr) {
 		Value* CondV = expAST->codegen();
 		if (!CondV)return nullptr;
+		if (AllocaInst::classof(CondV) || GlobalVariable::classof(CondV)) {
+			CondV = Builder.CreateLoad(CondV);
+		}
 		CondV = Builder.CreateICmpNE((Constant*)CondV, ConstantInt::get(TheContext, APInt(32, 0)), "ifcond");
 
 		Function* TheFunciton = Builder.GetInsertBlock()->getParent();
@@ -69,11 +72,12 @@ Value* IfStmtAST::codegen()
 	}
 	else {//if(){}else{}
 		Value* CondV = expAST->codegen();
-		if (AllocaInst::classof(CondV)) {
+		if (!CondV)return nullptr;
+		if (AllocaInst::classof(CondV) || GlobalVariable::classof(CondV)) {
 			CondV = Builder.CreateLoad(CondV);
 		}
 		//Value* compare = ConstantFP::get(TheContext, APFloat(0.0));
-		if (!CondV)return nullptr;
+		
 		//CondV = cast<ConstantFP>(CondV);
 
 		/*zx::Type type = expAST->expType;

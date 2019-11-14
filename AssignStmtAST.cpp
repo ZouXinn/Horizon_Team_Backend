@@ -47,20 +47,11 @@ Value* AssignStmtAST::codegen()
 				Value* intExpVal = values[1];
 				expVal = expAST->codegen();
 				Val = Builder.CreateLoad(allo);
-				//Val = Builder.CreateInsertElement(Val, expVal, intExpVal);
-				/*cout << endl;
-				Val->print(errs());
-				cout << endl;
-				expVal->print(errs());
-				cout << endl;
-				intExpVal->print(errs());
-				cout << endl;*/
-				
 
-				if (AllocaInst::classof(intExpVal)) {
+				if (AllocaInst::classof(intExpVal)||GlobalVariable::classof(intExpVal)) {
 					intExpVal = Builder.CreateLoad(intExpVal);
 				}
-				if (AllocaInst::classof(expVal)) {
+				if (AllocaInst::classof(expVal) || GlobalVariable::classof(expVal)) {
 					expVal = Builder.CreateLoad(expVal);
 				}
 				//ÀàÐÍ×ª»»

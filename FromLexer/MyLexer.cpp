@@ -917,6 +917,11 @@ SourceCode* MyLexer::readSourceCode(const char* fileName,bool isFile)
 		return sc;
 	}
 }
+
+//SourceCode* MyLexer::readSourceCode(char* code)
+//{
+//
+//}
 void MyLexer::printResult()
 { 
 	string tokens[] = { "Plus","Minus","Star","Divide","Mode","PlusPlus","MinusMinus","More","Less","MoreOrEq","LessOrEq","Eq",

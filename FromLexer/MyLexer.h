@@ -88,6 +88,7 @@ private:
 	static int keyNum;
 
 	SourceCode* readSourceCode(const char* fileName,bool isFile);
+	SourceCode* readSourceCode(char* code);
 	void buildSymbols();
 	static zx::Token inKey(string str);
 
