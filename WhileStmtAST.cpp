@@ -20,7 +20,6 @@ WhileStmtAST::~WhileStmtAST()
 
 Value* WhileStmtAST::codegen()
 {
-	cout << "WhileStmtAST\n";
 
 	Value* Val;
 

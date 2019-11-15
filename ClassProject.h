@@ -94,5 +94,12 @@ extern BasicBlock* currentRetBB;
 extern Value* currentRetValue;
 extern PHINode* currentRetPN;
 
+extern Function* CreateInterprterFunction();
+
+//extern void CreateWriteStr(int8_t d[]);
+
+extern void writeChar(string s);
+
+
 
 
