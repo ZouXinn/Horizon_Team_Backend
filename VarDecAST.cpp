@@ -197,6 +197,7 @@ Value* VarDecAST::codegen() {
 					GV[iter->first] = gv;
 				}
 				else {
+					
 					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
 					NamedValues[iter->first] = c;
 					Value* g = Builder.CreateStore(defaultVal, c);

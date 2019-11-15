@@ -32,6 +32,39 @@ AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 //		return FI1.PR < FI2.PR;
 //	}
 //}
+string getHighestStr(string str) {
+	int i = str.length();
+	for (; i >= 0; i--) {
+		if (str[i] == '_' && i > 0 && str[i - 1] == '_') {
+			break;
+		}
+	}
+	i++;
+	string substr = str.substr(0, i);
+	int num = 0;
+	for (; i < str.length(); i++) {
+		num *= 10;
+		num += str[i] - '0';
+	}
+	for (; num >= 1; num--)
+	{
+		string ts = substr + to_string(num);
+		if (NamedValues.count(ts) == 1) {//ÕÒµ½
+			return ts;
+		}
+	}
+	string pts = substr + to_string(1) + ".addr";
+	if (Params.count(pts) == 1) {
+		return pts;
+	}
+	string ts = substr + to_string(num);
+	if (GV.count(ts) == 1) {
+		return ts;
+	}
+	else {
+		return "";
+	}
+}
 AllocaInst* getHighestValue(string str) //·µ»ØAllocaInst*
 {
 	int i = str.length();
