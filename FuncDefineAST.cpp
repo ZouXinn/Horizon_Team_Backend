@@ -155,6 +155,8 @@ Value* FuncDefineAST::codegen() {
 		//当stmts生成完时，检查每一个BaickBlock，如果没有终结标志就添加ret
 		//对于使用者写的ret太多的情况，再stmtsAST和if,while语句中分别处理，使得遇到第一个return后便不再继续生成IR代码
 
+
+
 		Type* retType = FT->getReturnType();
 		for (BasicBlock& BB : currentFun->getBasicBlockList()) {
 			Instruction* Terminator = BB.getTerminator();

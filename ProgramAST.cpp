@@ -42,7 +42,7 @@ Value* ProgramAST::codegen() {
 		//Builder.CreateG
 	}
 
-
+	
 	for (int i = this->func_define_ASTs->size() - 1; i >= 0; i--)
 	{
 		this->func_define_ASTs->at(i)->codegen();

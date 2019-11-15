@@ -144,7 +144,19 @@ MyParser::MyParser(const char* sourceCodeFile, const char* SLR1File, const char*
 	definedFuncs = new map<string, vector<FuncDefineAST*>>();
 	var_table = new map<VarIndex, Variable*>();
 }
-
+void MyParser::clearVarLevelMoreThan(int level) {
+	if (var_table != nullptr&&level >= 0) {
+		for (map<VarIndex, Variable*>::iterator iter = var_table->begin(); iter != var_table->end(); ) {
+			if (iter->first.level > level) {
+				delete iter->second;
+				var_table->erase(iter++);
+			}
+			else {
+				iter++;
+			}
+		}
+	}
+}
 
 void MyParser::readpro2index(const char* proFileName)
 {
@@ -512,6 +524,7 @@ void MyParser::Parse()
 				this->push(ast, action.aim);
 				ast = nullptr;
 				curLevel--;
+				clearVarLevelMoreThan(curLevel);
 				break;
 			case Token::LS:
 				ast = new OtherSymAST(Token::LS);

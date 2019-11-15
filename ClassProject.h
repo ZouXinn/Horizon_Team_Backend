@@ -136,3 +136,5 @@ extern PHINode* currentRetPN;
 //
 //extern DebugInfo DbgInfo;
 
+//extern int strIndex;
+//void CreateWriteStr(string str);

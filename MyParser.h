@@ -197,6 +197,8 @@ private:
 
 	//DFAtools ÀïÃæµÄ
 	static map<DicIndex, string>* readSLR1Table(const char* sourceFileName);
+
+	void clearVarLevelMoreThan(int level);
 public:
 
 	MyParser(const char* sourceCodeFile, const char* SLR1File, const char* proFileName,string empty_str,bool isFile);

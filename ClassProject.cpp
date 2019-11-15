@@ -137,17 +137,23 @@ void InitializeModuleAndPassManager(void) {
 
 	std::vector<Type*> WTINT(1, Type::getInt32Ty(TheContext));
 	std::vector<Type*> WTDB(1, Type::getDoubleTy(TheContext));
+	std::vector<Type*> WTSTR(1, Type::getInt8PtrTy(TheContext));
 	FunctionType* readIntFT = FunctionType::get(Type::getInt32Ty(TheContext), false);
 	FunctionType* readDoubleFT = FunctionType::get(Type::getDoubleTy(TheContext), false);
 	FunctionType* writeIntFT = FunctionType::get(Type::getVoidTy(TheContext), WTINT, false);
 	FunctionType* writeDoubleFT = FunctionType::get(Type::getVoidTy(TheContext), WTDB, false);
+	FunctionType* writeStringFT = FunctionType::get(Type::getVoidTy(TheContext), WTSTR, false);
 	
 	Function::Create(readIntFT, Function::ExternalLinkage, "readInt", TheModule.get());
 	Function::Create(readDoubleFT, Function::ExternalLinkage, "readDouble", TheModule.get());
 	Function::Create(writeIntFT, Function::ExternalLinkage, "writeInt", TheModule.get());
 	Function::Create(writeDoubleFT, Function::ExternalLinkage, "writeDouble", TheModule.get());
+	Function::Create(writeStringFT, Function::ExternalLinkage, "writeString", TheModule.get());
+	
+
 
 	//
+
 	
 
 }
@@ -191,6 +197,15 @@ extern "C" DLLEXPORT void writeInt(int i) {
 extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
+extern "C" DLLEXPORT void writeString(const char* cp) {
+	fprintf(stdout, "%s\n",cp);
+}
+//extern "C" DLLEXPORT void writeString(vector<char> v) {
+//	for (int i = 0; i < v.size(); i++) {
+//		fprintf(stdout, "%c", v[i]);
+//	}
+//	fprintf(stdout, "\n");
+//}
 
 //extern "C" DLLEXPORT void writeStr(string str) {
 //	fprintf(stdout, "%s\n", str);
@@ -198,5 +213,37 @@ extern "C" DLLEXPORT void writeDouble(double d) {
 BasicBlock* currentRetBB;
 Value* currentRetValue;
 PHINode* currentRetPN;
-
-
+//int strIndex = 0;
+//
+//void CreateWriteStr(string str) {
+//	llvm::ArrayRef<llvm::Constant*> V;
+//	vector<Constant*> constVector;
+//	for (int i = 0; i < str.length(); i++) {
+//		constVector.push_back(ConstantInt::get(TheContext, APInt(8, str[i])));
+//	}
+//	constVector.push_back(ConstantInt::get(TheContext, APInt(8, 0)));
+//	V = llvm::ArrayRef<llvm::Constant*>(constVector);
+//
+//	string strName = "str__" + to_string(strIndex);
+//	Value* idx = ConstantInt::get(TheContext, APInt(32, 0));
+//	ArrayRef<llvm::Value*> idxs = ArrayRef<llvm::Value*>(idx);
+//
+//	//创建Array
+//	ArrayType* arrType = ArrayType::get(Type::getInt8Ty(TheContext), str.length()+1);
+//	AllocaInst* strArr = CreateEntryBlockAlloca(currentFun, strName, arrType);
+//	//给Array赋初值
+//	Constant* constantArr =  ConstantArray::get(arrType, V);
+//	Value* arrVal = Builder.CreateStore(constantArr, strArr);
+//
+//	//获取ElementPtr
+//	arrVal->print(errs());
+//
+//	Type* type = arrType->getElementType();
+//	type->print(errs());
+//
+//	GetElementPtrInst* i = GetElementPtrInst::Create(type, strArr, idxs);
+//
+//
+//
+//	strIndex++;
+//}
