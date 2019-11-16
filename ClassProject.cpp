@@ -283,6 +283,7 @@ extern "C" DLLEXPORT void writeChar(int8_t x) {
 	fputc((char)x, stdout);
 }
 
+
 void writeChar(string s) {
 	Function* func = TheModule->getFunction("writeChar");
 	for (int i = 0; i < s.size(); i++) {
