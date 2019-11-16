@@ -140,3 +140,11 @@ extern PHINode* currentRetPN;
 
 //extern int strIndex;
 //void CreateWriteStr(string str);
+
+
+
+extern Function* CreateInterprterFunction();
+
+//extern void CreateWriteStr(int8_t d[]);
+
+extern void writeChar(string s);

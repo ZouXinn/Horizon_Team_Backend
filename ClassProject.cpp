@@ -234,7 +234,9 @@ void InitializeModuleAndPassManager(void) {
 
 
 	//
-
+	std::vector<Type*> WTCHAR(1, Type::getInt8Ty(TheContext));
+	FunctionType* writeCharFT = FunctionType::get(Type::getVoidTy(TheContext), WTCHAR, false);
+	Function::Create(writeCharFT, Function::ExternalLinkage, "writeChar", TheModule.get());
 	
 
 }
@@ -281,50 +283,100 @@ extern "C" DLLEXPORT void writeDouble(double d) {
 extern "C" DLLEXPORT void writeString(const char* cp) {
 	fprintf(stdout, "%s\n",cp);
 }
-//extern "C" DLLEXPORT void writeString(vector<char> v) {
-//	for (int i = 0; i < v.size(); i++) {
-//		fprintf(stdout, "%c", v[i]);
-//	}
-//	fprintf(stdout, "\n");
-//}
 
-//extern "C" DLLEXPORT void writeStr(string str) {
-//	fprintf(stdout, "%s\n", str);
-//}
 BasicBlock* currentRetBB;
 Value* currentRetValue;
 PHINode* currentRetPN;
-//int strIndex = 0;
-//
-//void CreateWriteStr(string str) {
-//	llvm::ArrayRef<llvm::Constant*> V;
-//	vector<Constant*> constVector;
-//	for (int i = 0; i < str.length(); i++) {
-//		constVector.push_back(ConstantInt::get(TheContext, APInt(8, str[i])));
-//	}
-//	constVector.push_back(ConstantInt::get(TheContext, APInt(8, 0)));
-//	V = llvm::ArrayRef<llvm::Constant*>(constVector);
-//
-//	string strName = "str__" + to_string(strIndex);
-//	Value* idx = ConstantInt::get(TheContext, APInt(32, 0));
-//	ArrayRef<llvm::Value*> idxs = ArrayRef<llvm::Value*>(idx);
-//
-//	//创建Array
-//	ArrayType* arrType = ArrayType::get(Type::getInt8Ty(TheContext), str.length()+1);
-//	AllocaInst* strArr = CreateEntryBlockAlloca(currentFun, strName, arrType);
-//	//给Array赋初值
-//	Constant* constantArr =  ConstantArray::get(arrType, V);
-//	Value* arrVal = Builder.CreateStore(constantArr, strArr);
-//
-//	//获取ElementPtr
-//	arrVal->print(errs());
-//
-//	Type* type = arrType->getElementType();
-//	type->print(errs());
-//
-//	GetElementPtrInst* i = GetElementPtrInst::Create(type, strArr, idxs);
-//
-//
-//
-//	strIndex++;
-//}
+
+Function* CreateInterprterFunction()
+{
+
+	string Name = "interpreterFunction";
+
+
+	std::vector<Type*> params;
+	FunctionType* FT;
+
+	FT = FunctionType::get((Type*)Type::getVoidTy(TheContext), params, false);
+
+	Function* interFunc = Function::Create(FT, Function::ExternalLinkage, Name, TheModule.get());
+
+	// Create a new basic block to start insertion into.
+	BasicBlock* BB = BasicBlock::Create(TheContext, "entry", interFunc);
+	Builder.SetInsertPoint(BB);
+
+	verifyFunction(*interFunc);
+
+	/*Function* func = nullptr;
+	Value* Val = nullptr;
+	map<string, AllocaInst*>::iterator iter;
+	for (auto iter = NamedValues.begin(); iter != NamedValues.end(); iter++) {
+		Val = Builder.CreateLoad(iter->second);
+		if (Val->getType()->isIntegerTy()) {
+			func = TheModule->getFunction("writeInt");
+		}
+		else if (Val->getType()->isDoubleTy())
+		{
+			func = TheModule->getFunction("writeDouble");
+		}
+
+
+		Builder.CreateCall(func, Val);
+	}*/
+
+	Builder.CreateFAdd(ConstantFP::get(TheContext, APFloat(1.0)), ConstantFP::get(TheContext, APFloat(1.0)));
+
+	Builder.CreateRetVoid();
+
+	return interFunc;
+}
+
+
+int strIndex = 0;
+
+void CreateWriteStr(string str) {
+	llvm::ArrayRef<llvm::Constant*> V;
+	vector<Constant*> constVector;
+	for (int i = 0; i < str.length(); i++) {
+		constVector.push_back(ConstantInt::get(TheContext, APInt(8, str[i])));
+	}
+	constVector.push_back(ConstantInt::get(TheContext, APInt(8, 0)));
+	V = llvm::ArrayRef<llvm::Constant*>(constVector);
+
+	string strName = "str__" + to_string(strIndex);
+	Value* idx = ConstantInt::get(TheContext, APInt(32, 0));
+	ArrayRef<llvm::Value*> idxs = ArrayRef<llvm::Value*>(idx);
+
+	//创建Array
+	ArrayType* arrType = ArrayType::get(Type::getInt8Ty(TheContext), str.length() + 1);
+	AllocaInst* strArr = CreateEntryBlockAlloca(currentFun, strName, arrType);
+	//给Array赋初值
+	Constant* constantArr = ConstantArray::get(arrType, V);
+	Value* arrVal = Builder.CreateStore(constantArr, strArr);
+
+	//获取ElementPtr
+	arrVal->print(errs());
+
+	Type* type = arrType->getElementType();
+	type->print(errs());
+
+	GetElementPtrInst* i = GetElementPtrInst::Create(type, strArr, idxs);
+
+
+
+	strIndex++;
+}
+
+extern "C" DLLEXPORT void writeChar(int8_t x) {
+	fputc((char)x, stdout);
+}
+
+
+void writeChar(string s) {
+	Function* func = TheModule->getFunction("writeChar");
+	for (int i = 0; i < s.size(); i++) {
+		int8_t a = s[i];
+		Value* Val = ConstantInt::get(IntegerType::get(TheContext, 8), APInt(8, a));
+		Builder.CreateCall(func, Val);
+	}
+}
