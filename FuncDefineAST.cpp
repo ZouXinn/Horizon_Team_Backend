@@ -29,22 +29,6 @@ FuncDefineAST::~FuncDefineAST()
 }
 
 Value* FuncDefineAST::codegen() {
-
-	//
-	//FWH
-	//
-
-	/*currentFun = Builder.GetInsertBlock()->getParent();
-	Value* Val = stmtsAST->codegen();
-	cout << "\nFuncDefineAST\n";
-	verifyFunction(*currentFun);
-	currentFun->print(errs());
-	return Val;
-	return nullptr;*/
-
-	//
-	//LBQ
-	//
 	Type* type = typeSpecifyAST->codegenType();
 	string Name = funcNameIdentifier->codegenStr();
 	

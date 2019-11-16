@@ -78,6 +78,7 @@ extern void InitializeModule();
 extern BasicBlock* updateBB();
 
 extern AllocaInst* getHighestValue(string str);
+extern AllocaInst* getHighestValue(string str,int type);
 extern string getHighestStr(string str);
 
 struct IdItem

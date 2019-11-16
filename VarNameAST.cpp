@@ -76,9 +76,9 @@ string VarNameAST::codegenStr()
 	switch (type)
 	{
 	case 0:
-		return identifier->codegenStr()+"__"+to_string(level);
+		return identifier->codegenStr()+"."+to_string(level);
 	case 1:
-		return left->identifier->codegenStr()+ "__" + to_string(level);
+		return left->identifier->codegenStr()+ "." + to_string(level);
 	default:
 		break;
 	}
@@ -94,18 +94,35 @@ Value* VarNameAST::codegen()
 	Value* Val = nullptr;
 	vector<unsigned int> zeroV;
 	ArrayRef<unsigned int> idx;
+	int type = -1;
+	if (this->varType == zx::Type::INT) {
+		if (this->isArray) {
+			type = 2;
+		}
+		else {
+			type = 0;
+		}
+	}
+	else if (this->varType == zx::Type::REAL) {
+		if (this->isArray) {
+			type = 3;
+		}
+		else {
+			type = 1;
+		}
+	}
 	switch (type)
 	{
 	case 0:
 		//return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
-		return getHighestValue(this->codegenStr());
+		return getHighestValue(this->codegenStr(),type);
 	case 1://varName[exp]
 		expVal = intExp->codegen();
 		if (AllocaInst::classof(expVal)) {
 			expVal = Builder.CreateLoad(expVal);
 		}
 		//allo = NamedValues[this->codegenStr()]; // allo是varName的内存空间，需要找到按下标访问的方法
-		allo = getHighestValue(this->codegenStr());
+		allo = getHighestValue(this->codegenStr(),type);
 		//或者不用allo,用load之后的allo?
 		
 		/*
@@ -154,7 +171,24 @@ vector<Value*> VarNameAST::codegenAlloAndExpValue() {//第一个是varName的allo，第
 	}
 	else {
 		//ret.push_back(NamedValues[this->codegenStr()]);
-		ret.push_back(getHighestValue(this->codegenStr()));
+		int type = -1;
+		if (this->varType == zx::Type::INT) {
+			if (this->isArray) {
+				type = 2;
+			}
+			else {
+				type = 0;
+			}
+		}
+		else if (this->varType == zx::Type::REAL) {
+			if (this->isArray) {
+				type = 3;
+			}
+			else {
+				type = 1;
+			}
+		}
+		ret.push_back(getHighestValue(this->codegenStr(),type));
 		ret.push_back(intExp->codegen());
 		return ret;
 	}

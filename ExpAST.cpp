@@ -490,14 +490,24 @@ Value* ExpAST::codegen() {
 		}
 		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
 			//allo = NamedValues[varNameAST->codegenStr()];
-			allo = getHighestValue(varNameAST->codegenStr());
-			if (allo == nullptr) {//在形参中找
-				//currentFun->arg
+			int type = -1;
+			if (varNameAST->varType == zx::Type::INT) {
+				if (varNameAST->isArray) {
+					type = 2;
+				}
+				else {
+					type = 0;
+				}
 			}
-			//Val = Builder.CreateLoad(allo);
-
-
-			//return Val;
+			else if (varNameAST->varType == zx::Type::REAL) {
+				if (varNameAST->isArray) {
+					type = 3;
+				}
+				else {
+					type = 1;
+				}
+			}
+			allo = getHighestValue(varNameAST->codegenStr(),type);
 			return allo;
 		}
 		else if (varNameAST->type == 4) {// varName -> * exp   , 则可能是在左部

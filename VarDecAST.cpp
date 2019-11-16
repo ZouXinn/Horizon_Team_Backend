@@ -19,19 +19,16 @@ VarDecAST::~VarDecAST()
 Value* VarDecAST::codegen() {
 	llvm::Type* type = typeSpecifyAST->codegenType();
 	map<string, ID*> b = idListAST->codegenMap();
-	//cout << "VarDecAST" << "\n";
-
+	int Itype = -1;
+	if (type->isIntegerTy()) {
+		Itype = 0;
+	}
+	else if (type->isDoubleTy()) {
+		Itype = 1;
+	}
 	map< string, ID* >::iterator iter;
 	iter = b.begin();
 	while (iter != b.end()) {
-
-		/*InitializeModule();
-		FunctionType* FibFTy = FunctionType::get(llvm::Type::getVoidTy(TheContext),
-			{ llvm::Type::getInt32Ty(TheContext) }, false);
-		Function* VarDec =
-			Function::Create(FibFTy, Function::ExternalLinkage, "VarDec", *TheModule);
-		BasicBlock* BB = BasicBlock::Create(TheContext, "EntryBlock", VarDec);
-		Builder.SetInsertPoint(BB);*/
 
 		ID* d = iter->second;
 		llvm::Type* e = NULL;
@@ -47,6 +44,7 @@ Value* VarDecAST::codegen() {
 		if (d->isArray) {//是数组
 			llvm::ArrayType* arrType = nullptr;
 			llvm::Type* elementType = nullptr;
+			int tIType = Itype + 2;
 
 			int elementNum = d->elementNum;
 			vector<llvm::Value*> valueVector = d->valueVector;//已经排好了顺序的
@@ -121,13 +119,19 @@ Value* VarDecAST::codegen() {
 			
 			//申请内存？
 			//AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, arrType);
-			
+			string TableVarName = iter->first + '.' + to_string(tIType);
 			if (this->level == 0) {
 				//GlobalValues[iter->first] = c;
-				GlobalVariable* gv = new GlobalVariable(*TheModule, vectorType, false, GlobalValue::PrivateLinkage, constantVector, iter->first);
+				GlobalVariable* gv = nullptr;
+				if (GV.count(TableVarName) == 1) {
+					gv = GV[TableVarName];
+				}
+				else {
+					gv = new GlobalVariable(*TheModule, vectorType, false, GlobalValue::PrivateLinkage, constantVector, TableVarName);
+				}
 				gv->print(errs());
 				cout << endl;
-				GV[iter->first] = gv;
+				GV[TableVarName] = gv;
 				if (noneConstIndex.size() > 0) {//不会出现
 					Value* vectorValue = Builder.CreateLoad(gv);
 					//vectorValue = Builder.CreateLoad(gv);
@@ -148,8 +152,15 @@ Value* VarDecAST::codegen() {
 				}
 			}
 			else {
-				AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, vectorType);
-				NamedValues[iter->first] = c;
+				
+				AllocaInst* c = nullptr;
+				if (NamedValues.count(TableVarName) == 1) {
+					c = NamedValues[TableVarName];
+				}
+				else {
+					c = CreateEntryBlockAlloca(currentFun, TableVarName, vectorType);
+				}
+				NamedValues[TableVarName] = c;
 				//在内存中装载相应的值
 				//Value* g = Builder.CreateStore(arrConstant, c);
 				Value* g = Builder.CreateStore(constantVector, c);
@@ -169,11 +180,9 @@ Value* VarDecAST::codegen() {
 					Builder.CreateStore(vectorValue, c);
 				}
 			}
-			
-			
-			
 		}
 		else {//不是数组
+			string TableVarName = iter->first + '.' + to_string(Itype);
 			if (d->valueVector.size() == 0) {//没有为变量赋值
 				Value* defaultVal = nullptr;
 				if (type->isIntegerTy()) {//如果是int a;
@@ -187,25 +196,31 @@ Value* VarDecAST::codegen() {
 
 				
 				if (this->level == 0) {
-					//GlobalVariable* gv = new GlobalVariable(type, false, GlobalValue::LinkageTypes::ExternalLinkage, (Constant*)defaultVal,iter->first);
-					GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)defaultVal,iter->first);
-					//GlobalValues[iter->first] = c;
-					//CreateGlabol
-
+					
+					GlobalVariable* gv = nullptr;
+					if (GV.count(TableVarName) == 1) {
+						gv = GV[TableVarName];
+					}
+					else {
+						gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)defaultVal, TableVarName);
+					}
 					gv->print(errs());
 					cout << endl;
-					GV[iter->first] = gv;
+					GV[TableVarName] = gv;
 				}
 				else {
 					
-					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
-					NamedValues[iter->first] = c;
+					AllocaInst* c = nullptr;
+					if (NamedValues.count(TableVarName) == 1) {
+						c = NamedValues[TableVarName];
+					}
+					else {
+						c = CreateEntryBlockAlloca(currentFun, TableVarName, e);
+					}
+					NamedValues[TableVarName] = c;
 					Value* g = Builder.CreateStore(defaultVal, c);
 					g->print(errs());
 				}
-
-				/*Value* g = Builder.CreateStore(defaultVal, c);
-				g->print(errs());*/
 			}
 			else {
 				Value* Val = (d->valueVector)[0];
@@ -227,40 +242,35 @@ Value* VarDecAST::codegen() {
 				
 				if (this->level == 0) {
 					if (GlobalVariable::classof(Val)||!Constant::classof(Val)) {//不会出现
-						//GlobalVariable* gv = nullptr;
-						//Constant* c = ((GlobalVariable*)Val)->getInitializer();
-						//gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, c, iter->first);
-						//gv->print(errs()); cout << endl;
-						////Value* g = Builder.CreateStore(Val, gv);
-						////g->print(errs()); cout << endl;
-						//GV[iter->first] = gv;
-						//throw Exception(DynamicSemaEx, this->row, "全局变量只能用常量初始化!");
 					}
 					else {
-						GlobalVariable* gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, iter->first);
+						GlobalVariable* gv = nullptr;
+						if (GV.count(TableVarName) == 1) {
+							gv = GV[TableVarName];
+						}
+						else {
+							gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, TableVarName);
+						}
 						gv->print(errs());
 						cout << endl;
-						GV[iter->first] = gv;
+						GV[TableVarName] = gv;
 					}
-					
-					//GlobalValues[iter->first] = c;
 				}
 				else {
-					AllocaInst* c = CreateEntryBlockAlloca(currentFun, iter->first, e);
-					NamedValues[iter->first] = c;
+					AllocaInst* c = nullptr;
+					if (NamedValues.count(TableVarName) == 1) {
+						c = NamedValues[TableVarName];
+					}
+					else {
+						c = CreateEntryBlockAlloca(currentFun, TableVarName, e);
+					}
+					NamedValues[TableVarName] = c;
 					if (AllocaInst::classof(Val)) {//如果是 int a = b
 						Value* RVar = Builder.CreateLoad(Val);
-						//RVar->print(errs());
-						//cout << "\n";
 						Value* LVar = Builder.CreateStore(RVar, c);
-						//LVar->print(errs());
-						//cout << "\n";
 					}
 					else {//如果是 int a = 1
 						Value* g = Builder.CreateStore(Val, c);
-						/*Value* g = Builder.CreateStore(iter->second, c);*/
-						//g->print(errs());
-						//cout << "\n";
 					}
 				}
 			}

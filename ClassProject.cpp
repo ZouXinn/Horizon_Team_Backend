@@ -65,6 +65,54 @@ string getHighestStr(string str) {
 		return "";
 	}
 }
+vector<string> split(string str) {//根据.分开
+	vector<string> ret;
+	string ts = "";
+	int finishedNum = 0;
+	for (int i = 0; i < str.length(); i++) {
+		if (str[i] != '.') {
+			ts += str[i];
+		}
+		else {
+			ret.push_back(ts);
+			ts = "";
+		}
+	}
+	if (ts != "") {
+		ret.push_back(ts);
+	}
+	return ret;
+}
+AllocaInst* getHighestValue(string str, int type) {//str ---> name.level
+	if (type < 0 || type > 3) {
+		return nullptr;
+	}
+	int i = str.length();
+	vector<string> strs = split(str);
+	if (strs.size() != 2) {
+		return nullptr;
+	}
+	int oriLevel = 0;
+	for (int i = 0; i < strs[1].length(); i++) {
+		oriLevel *= 10;
+		oriLevel += strs[1][i] - '0';
+	}
+	for (int i = oriLevel; i >= 0; i--) {
+		string tName = strs[0] + '.' + to_string(i) + '.' + to_string(type);
+		if (NamedValues.count(tName) == 1) {
+			return NamedValues[tName];
+		}
+	}
+	string tPName = strs[0] + '.' + to_string(1) + ".addr";
+	if (Params.count(tPName) == 1) {
+		return (AllocaInst*)Params[tPName];
+	}
+	string tGName = strs[0] + '.' + to_string(0) + '.' + to_string(type);
+	if (GV.count(tGName) == 1) {
+		return (AllocaInst*)GV[tGName];
+	}
+	return nullptr;
+}
 AllocaInst* getHighestValue(string str) //返回AllocaInst*
 {
 	int i = str.length();
