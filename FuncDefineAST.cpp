@@ -182,7 +182,6 @@ Value* FuncDefineAST::codegen() {
 
 	//zx end
 
-
 	//// Error reading body, remove function.
 	currentFun->eraseFromParent();
 	return nullptr;
