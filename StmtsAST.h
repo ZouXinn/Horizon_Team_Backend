@@ -8,6 +8,7 @@ class StmtsAST :
 {
 public:
 	vector<StmtAST*>* stmtASTs;
+	int level = 0;
 
 	StmtsAST();
 	virtual ~StmtsAST();
@@ -15,5 +16,8 @@ public:
 	void addStmtAST(StmtAST* ast);
 
 	Value* codegen();
+	void setLevel(int lv) {
+		this->level = lv;
+	}
 };
 

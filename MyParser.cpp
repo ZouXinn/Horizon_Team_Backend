@@ -2967,6 +2967,7 @@ void MyParser::Parse()
 				StmtAST* stmt = (StmtAST*)pop();
 				stmts->addStmtAST(stmt);
 				stmts->setRow(stmt->row);
+				stmts->setLevel(curLevel);
 				tree = stmts;
 				//delete semi;
 				GoTo(tree, "<stmts>");

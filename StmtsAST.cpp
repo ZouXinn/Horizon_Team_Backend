@@ -41,23 +41,72 @@ Value* StmtsAST::codegen()
 			Function* strFunc = nullptr;
 			Value* strVal = nullptr;
 			map<string, AllocaInst*>::iterator iter;
-			string s = "\nLine "+to_string(this->stmtASTs->at(i)->row)+":\n\n";
+			string s = "\nLine "+to_string(this->stmtASTs->at(i)->row)+":\n";
+			map<string, Value*> res;
 
 			writeChar(s);
-			string tmp;
+			string name;
+			int type;
 			for (auto iter = NamedValues.begin(); iter != NamedValues.end(); iter++) {
-				//tmp = "__" + to_string(this->stmtASTs->at(i)->level);
-				///*if (!iter->first.find("__" + to_string(this->stmtASTs->at(i)->level))) {
-				//	Continue;
-				//}*/
-				////string s = iter->first.substr(iter->first.size() - tmp.size());
-				//if ((tmp.size()> iter->first.size()) || (!(iter->first.substr(iter->first.size() - tmp.size())._Equal(tmp)))) {
-				//	Continue;
-				//}
-				//
-				writeChar(iter->first.substr(0,iter->first.size()-tmp.size()) + ":");
 
+				int pos1 = iter->first.find(".");
+				int pos2 = iter->first.find_last_of(".");
+				int ori_level = level;
+				name = iter->first.substr(0, pos1)+"."+to_string(ori_level);
+				type = atoi(iter->first.substr(pos2, iter->first.size() - pos2 + 1).c_str());
+				name = getHighestStr(name,type);
+				if (name.empty()) {
+					continue;
+				}
+				if (!name._Equal(iter->first)) {
+					continue;
+				}
 				Val = Builder.CreateLoad(iter->second);
+				res[iter->first.substr(0,pos1)] = Val;
+
+				/*cout << "NameValues:\n";
+				cout << iter->first;
+				cout << "\n";*/
+
+
+			}
+
+			for (auto iter = Params.begin(); iter != Params.end(); iter++) {
+
+				int pos1 = iter->first.find(".");
+				int pos2 = iter->first.find_last_of(".");
+				if ((res.count(iter->first.substr(0, pos1)) == 0) && (pos1!=pos2)) {
+					/*Val = iter->second;*/
+					Val = Builder.CreateLoad((AllocaInst*)iter->second);
+					if (Val != NULL) {
+						res[iter->first.substr(0, pos1)] = Val;
+						/*cout << "Params:\n";
+						cout << iter->first;
+						cout << "\n";*/
+					}
+				}
+
+
+			}
+
+			for (auto iter = GV.begin(); iter != GV.end(); iter++) {
+
+				int pos1 = iter->first.find(".");
+				if (res.count(iter->first.substr(0, pos1)) == 0) {
+					Val = Builder.CreateLoad(iter->second);
+					
+					res[iter->first.substr(0, pos1)] = Val;
+					//cout << "GB:\n";
+					//cout << iter->first;
+					//cout << "\n";
+				}
+				
+
+			}
+			
+			for (auto iter = res.begin(); iter != res.end(); iter++) {
+				writeChar(iter->first+":");
+				Val = iter->second;
 				if (Val->getType()->isIntegerTy()) {
 					func = TheModule->getFunction("writeInt");
 				}
@@ -66,11 +115,6 @@ Value* StmtsAST::codegen()
 					func = TheModule->getFunction("writeDouble");
 				}
 				Builder.CreateCall(func, Val);
-
-				writeChar("\n");
-
-				
-
 			}
 
 			Val = this->stmtASTs->at(i)->codegen();

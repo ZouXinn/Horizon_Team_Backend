@@ -33,6 +33,8 @@ AllocaInst* CreateEntryBlockAlloca(Function* TheFunction,
 //	}
 //}
 string getHighestStr(string str) {
+
+	
 	int i = str.length();
 	for (; i >= 0; i--) {
 		if (str[i] == '_' && i > 0 && str[i - 1] == '_') {
@@ -65,6 +67,9 @@ string getHighestStr(string str) {
 		return "";
 	}
 }
+
+
+
 vector<string> split(string str) {//根据.分开
 	vector<string> ret;
 	string ts = "";
@@ -83,6 +88,42 @@ vector<string> split(string str) {//根据.分开
 	}
 	return ret;
 }
+
+//
+//冯文翰于11月17日9：38新增
+//
+string getHighestStr(string str, int type) {
+	if (type < 0 || type > 3) {
+		return "";
+	}
+	int i = str.length();
+	vector<string> strs = split(str);
+	if (strs.size() != 2) {
+		return "";
+	}
+	int oriLevel = 0;
+	for (int i = 0; i < strs[1].length(); i++) {
+		oriLevel *= 10;
+		oriLevel += strs[1][i] - '0';
+	}
+	for (int i = oriLevel; i >= 0; i--) {
+		string tName = strs[0] + '.' + to_string(i) + '.' + to_string(type);
+		if (NamedValues.count(tName) == 1) {
+			return tName;
+		}
+	}
+	string tPName = strs[0] + '.' + to_string(1) + ".addr";
+	if (Params.count(tPName) == 1) {
+		return tPName;
+	}
+	string tGName = strs[0] + '.' + to_string(0) + '.' + to_string(type);
+	if (GV.count(tGName) == 1) {
+		return tGName;
+	}
+	return "";
+}
+
+
 AllocaInst* getHighestValue(string str, int type) {//str ---> name.level
 	if (type < 0 || type > 3) {
 		return nullptr;

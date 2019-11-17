@@ -80,6 +80,10 @@ extern BasicBlock* updateBB();
 extern AllocaInst* getHighestValue(string str);
 extern AllocaInst* getHighestValue(string str,int type);
 extern string getHighestStr(string str);
+//
+//冯文翰于11月17日9：38新增
+//
+extern string getHighestStr(string str, int type);
 
 struct IdItem
 {
