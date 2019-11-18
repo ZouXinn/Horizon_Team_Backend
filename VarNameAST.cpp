@@ -12,6 +12,10 @@ VarNameAST::VarNameAST(VarNameAST* left, ExpAST* intExp)//type = 1
 	this->type = 1;
 	this->left = left;
 	this->intExp = intExp;
+	//
+	//冯文翰于11月19日0：24修改
+	//
+	//this->isArray = true;
 }
 
 VarNameAST::VarNameAST(VarNameAST* left, VarNameAST* right, int type)// type = 2   3
@@ -95,8 +99,13 @@ Value* VarNameAST::codegen()
 	vector<unsigned int> zeroV;
 	ArrayRef<unsigned int> idx;
 	int type = -1;
+
+	//
+	//冯文翰于11月18日17：42更改
+	//
 	if (this->varType == zx::Type::INT) {
-		if (this->isArray) {
+		//if (this->isArray) {
+		if (this->type == 1) {
 			type = 2;
 		}
 		else {
@@ -104,52 +113,35 @@ Value* VarNameAST::codegen()
 		}
 	}
 	else if (this->varType == zx::Type::REAL) {
-		if (this->isArray) {
+		//if (this->isArray) {
+		if (this->type == 1) {
 			type = 3;
 		}
 		else {
 			type = 1;
 		}
 	}
-	switch (type)
+	/*if (this->isArray) {
+		type = 1;
+	}
+	else
+	{
+		type = 0;
+	}*/
+	switch (this->type)
 	{
 	case 0:
 		//return NamedValues[identifier->codegenStr()];//此处返回的是AllocaInst*
-		return getHighestValue(this->codegenStr(),type);
+		return getHighestValue(this->codegenStr(), type);
 	case 1://varName[exp]
 		expVal = intExp->codegen();
-		if (AllocaInst::classof(expVal)) {
+		if (AllocaInst::classof(expVal) || GlobalValue::classof(expVal)) {
 			expVal = Builder.CreateLoad(expVal);
 		}
 		//allo = NamedValues[this->codegenStr()]; // allo是varName的内存空间，需要找到按下标访问的方法
-		allo = getHighestValue(this->codegenStr(),type);
-		//或者不用allo,用load之后的allo?
-		
-		/*
-		//CreateExtractValue
-		zeroV.push_back(0);
-		idx = ArrayRef<unsigned int>(zeroV);
-
-		Val = Builder.CreateLoad(allo);
-		//通过按下标访问的方法访问
-		Val = Builder.CreateExtractValue(Val , idx);
-		//end
-		*/
-
-		//Builder.CreateInsertValue()
-		//Builder.CreateExtractValue()
-
-		//CreateExtractElement
+		allo = getHighestValue(this->codegenStr(), type);
 		Val = Builder.CreateLoad(allo);
 		Val = Builder.CreateExtractElement(Val, expVal);
-
-		//end
-
-
-		//Builder.CreateExtractValue()
-		//Builder.CreateExtractElement()
-		//Val = Builder.CreateExtractValue(allo, idx);
-		//Val = Builder.CreateLoad(allo);
 		return Val;//是否也该返回AllocaInst*类型？
 		//allo.
 	case 2:
@@ -173,7 +165,8 @@ vector<Value*> VarNameAST::codegenAlloAndExpValue() {//第一个是varName的allo，第
 		//ret.push_back(NamedValues[this->codegenStr()]);
 		int type = -1;
 		if (this->varType == zx::Type::INT) {
-			if (this->isArray) {
+			//if (this->isArray) {
+			if (this->type == 1) {
 				type = 2;
 			}
 			else {
@@ -181,14 +174,15 @@ vector<Value*> VarNameAST::codegenAlloAndExpValue() {//第一个是varName的allo，第
 			}
 		}
 		else if (this->varType == zx::Type::REAL) {
-			if (this->isArray) {
+			//if (this->isArray) {
+			if (this->type == 1) {
 				type = 3;
 			}
 			else {
 				type = 1;
 			}
 		}
-		ret.push_back(getHighestValue(this->codegenStr(),type));
+		ret.push_back(getHighestValue(this->codegenStr(), type));
 		ret.push_back(intExp->codegen());
 		return ret;
 	}

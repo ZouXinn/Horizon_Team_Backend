@@ -53,7 +53,8 @@ Value* StmtsAST::codegen()
 				int pos2 = iter->first.find_last_of(".");
 				int ori_level = level;
 				name = iter->first.substr(0, pos1)+"."+to_string(ori_level);
-				type = atoi(iter->first.substr(pos2, iter->first.size() - pos2 + 1).c_str());
+				type = atoi(iter->first.substr(pos2+1, iter->first.size() - pos2).c_str());
+				
 				name = getHighestStr(name,type);
 				if (name.empty()) {
 					continue;
@@ -109,12 +110,39 @@ Value* StmtsAST::codegen()
 				Val = iter->second;
 				if (Val->getType()->isIntegerTy()) {
 					func = TheModule->getFunction("writeInt");
+					Builder.CreateCall(func, Val);
 				}
 				else if (Val->getType()->isDoubleTy())
 				{
 					func = TheModule->getFunction("writeDouble");
+					Builder.CreateCall(func, Val);
 				}
-				Builder.CreateCall(func, Val);
+				else if (Val->getType()->isVectorTy()){
+					//cout << "yxl\n";
+					int eleCount = ((ConstantVector*)Val)->getType()->getElementCount().Min;
+					/*cout << iter->first<<"\n";
+					cout << eleCount << "\n";
+					cout << "line " << this->stmtASTs->at(i)->row;*/
+					Value* eleVal;
+					writeChar("{");
+					for (int i = 0; i < eleCount; i++) {
+						eleVal = Builder.CreateExtractElement(Val, ConstantInt::get(IntegerType::get(TheContext,32),APInt(32,i)));
+						if (eleVal->getType()->isIntegerTy()) {
+							func = TheModule->getFunction("writeIntNotBr");
+						}
+						else if (eleVal->getType()->isDoubleTy())
+						{
+							func = TheModule->getFunction("writeDoubleNotBr");
+						}
+						Builder.CreateCall(func, eleVal);
+						if (i != eleCount-1) {
+							writeChar(",");
+						}
+					}
+					writeChar("}\n");
+					
+				}
+				
 			}
 
 			Val = this->stmtASTs->at(i)->codegen();

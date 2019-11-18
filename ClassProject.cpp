@@ -271,6 +271,8 @@ void InitializeModuleAndPassManager(void) {
 	Function::Create(writeIntFT, Function::ExternalLinkage, "writeInt", TheModule.get());
 	Function::Create(writeDoubleFT, Function::ExternalLinkage, "writeDouble", TheModule.get());
 	Function::Create(writeStringFT, Function::ExternalLinkage, "writeString", TheModule.get());
+
+	//std::vector<Type*> WTARR(1, VectorType::get(Type::getInt32Ty(TheContext),);
 	
 
 
@@ -278,6 +280,9 @@ void InitializeModuleAndPassManager(void) {
 	std::vector<Type*> WTCHAR(1, Type::getInt8Ty(TheContext));
 	FunctionType* writeCharFT = FunctionType::get(Type::getVoidTy(TheContext), WTCHAR, false);
 	Function::Create(writeCharFT, Function::ExternalLinkage, "writeChar", TheModule.get());
+
+	Function::Create(writeIntFT, Function::ExternalLinkage, "writeIntNotBr", TheModule.get());
+	Function::Create(writeDoubleFT, Function::ExternalLinkage, "writeDoubleNotBr", TheModule.get());
 	
 
 }
@@ -321,8 +326,20 @@ extern "C" DLLEXPORT void writeInt(int i) {
 extern "C" DLLEXPORT void writeDouble(double d) {
 	fprintf(stdout, "%f\n", d);
 }
-extern "C" DLLEXPORT void writeString(const char* cp) {
-	fprintf(stdout, "%s\n",cp);
+//extern "C" DLLEXPORT void writeString(const char* cp) {
+//	fprintf(stdout, "%s\n",cp);
+//}
+extern "C" DLLEXPORT void writeArray(const vector<int> vec) {
+	for (int i = 0; i < vec.size(); i++) {
+		fprintf(stdout, "%d", vec[i]);
+	}
+	fprintf(stdout, "/n");
+}
+extern "C" DLLEXPORT void writeIntNotBr(int i) {
+	fprintf(stdout, "%d", i);
+}
+extern "C" DLLEXPORT void writeDoubleNotBr(double d) {
+	fprintf(stdout, "%f", d);
 }
 
 BasicBlock* currentRetBB;

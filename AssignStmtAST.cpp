@@ -20,7 +20,7 @@ Value* AssignStmtAST::codegen()
 	Value* expVal = nullptr;
 	Value* Val = nullptr;
 	Value* Val2 = nullptr;
-	switch (type)
+	switch (this->type)
 	{
 	case 0:
 		varNameVal = varNameAST->codegen();
