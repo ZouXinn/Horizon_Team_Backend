@@ -25,7 +25,7 @@ void testParser()
 	{
 		cout<<e.print();
 	}
-	system("pause");
+	//system("pause");
 }
 
 void testParser2()

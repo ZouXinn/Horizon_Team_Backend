@@ -230,6 +230,29 @@ Value* ExpAST::codegen() {
 			if (AllocaInst::classof(RVar) || GlobalVariable::classof(RVar)) {
 				RVar = Builder.CreateLoad(RVar);
 			}
+
+			//
+			//冯文翰与11月20日1：15添加
+			//
+			Function* func;
+			if (RVar->getType()->isIntegerTy()) {
+				func = TheModule->getFunction("intDivisorIsZero");
+				std::vector<Value*> vec{ RVar,ConstantInt::get(IntegerType::get(TheContext,32),APInt(32,this->row)) };
+				ArrayRef<Value*> arr = ArrayRef<Value*>(vec);
+				Builder.CreateCall(func, arr);
+				//如果出现除0，理论上应该进入报错机制，因为时间原因没有实现
+				//这里在给前台报错信息后返回了1作为ExpAST的codegen的返回值
+				return ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 1));
+			}
+			else if (RVar->getType()->isDoubleTy())
+			{
+				func = TheModule->getFunction("doubleDivisorIsZero");
+				std::vector<Value*> vec{ RVar,ConstantInt::get(IntegerType::get(TheContext,32),APInt(32,this->row)) };
+				ArrayRef<Value*> arr = ArrayRef<Value*>(vec);
+				Builder.CreateCall(func, arr);
+			}
+			
+
 			BothIsInterger = true;
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				//可以加上第三个参数作为IR语句中的临时变量名

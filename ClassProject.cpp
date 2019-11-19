@@ -283,8 +283,13 @@ void InitializeModuleAndPassManager(void) {
 
 	Function::Create(writeIntFT, Function::ExternalLinkage, "writeIntNotBr", TheModule.get());
 	Function::Create(writeDoubleFT, Function::ExternalLinkage, "writeDoubleNotBr", TheModule.get());
-	
 
+	std::vector<Type*> NZINT(2, Type::getInt32Ty(TheContext));
+	FunctionType* intDivisorIsZeroFT = FunctionType::get(Type::getVoidTy(TheContext), NZINT, false);
+	Function::Create(intDivisorIsZeroFT, Function::ExternalLinkage, "intDivisorIsZero", TheModule.get());
+	std::vector<Type*> NZDB{ Type::getDoubleTy(TheContext),Type::getInt32Ty(TheContext) };
+	FunctionType* doubleDivisorIsZeroFT = FunctionType::get(Type::getVoidTy(TheContext), NZDB, false);
+	Function::Create(doubleDivisorIsZeroFT, Function::ExternalLinkage, "doubleDivisorIsZero", TheModule.get());
 }
 
 
@@ -340,6 +345,16 @@ extern "C" DLLEXPORT void writeIntNotBr(int i) {
 }
 extern "C" DLLEXPORT void writeDoubleNotBr(double d) {
 	fprintf(stdout, "%f", d);
+}
+extern "C" DLLEXPORT void intDivisorIsZero(int i,int line) {
+	if (i == 0) {
+		fprintf(stdout, "\nERROR\n@%d³ý0´íÎó", line);
+	}
+}
+extern "C" DLLEXPORT void doubleDivisorIsZero(double d, int line) {
+	if (abs(d-0)<0.000001) {
+		fprintf(stdout, "\nERROR\n@%d³ý0´íÎó\n", line);
+	}
 }
 
 BasicBlock* currentRetBB;

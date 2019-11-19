@@ -41,7 +41,7 @@ Value* StmtsAST::codegen()
 			Function* strFunc = nullptr;
 			Value* strVal = nullptr;
 			map<string, AllocaInst*>::iterator iter;
-			string s = "\nLine "+to_string(this->stmtASTs->at(i)->row)+":\n";
+			string s = "\n@"+to_string(this->stmtASTs->at(i)->row)+"\n";
 			map<string, Value*> res;
 
 			writeChar(s);
@@ -63,7 +63,7 @@ Value* StmtsAST::codegen()
 					continue;
 				}
 				Val = Builder.CreateLoad(iter->second);
-				res[iter->first.substr(0,pos1)] = Val;
+				res[to_string(type)+" "+iter->first.substr(0,pos1)+" "] = Val;
 
 				/*cout << "NameValues:\n";
 				cout << iter->first;
@@ -79,11 +79,25 @@ Value* StmtsAST::codegen()
 				if ((res.count(iter->first.substr(0, pos1)) == 0) && (pos1!=pos2)) {
 					/*Val = iter->second;*/
 					Val = Builder.CreateLoad((AllocaInst*)iter->second);
+					int type = -1;
+					if (Val->getType()->isIntegerTy()) {
+						type = 0;
+					}
+					else if (Val->getType()->isDoubleTy()) {
+						type = 1;
+					}
+					else if (((ConstantVector*)Val)->getType()->getElementType()->isIntegerTy())
+					{
+						type = 2;
+					}
+					else if (((ConstantVector*)Val)->getType()->getElementType()->isDoubleTy())
+					{
+						type = 3;
+					}
+				
 					if (Val != NULL) {
-						res[iter->first.substr(0, pos1)] = Val;
-						/*cout << "Params:\n";
-						cout << iter->first;
-						cout << "\n";*/
+						//res[iter->first.substr(0, pos1)] = Val;
+						res[to_string(type) + " " + iter->first.substr(0, pos1) + " "] = Val;
 					}
 				}
 
@@ -93,10 +107,13 @@ Value* StmtsAST::codegen()
 			for (auto iter = GV.begin(); iter != GV.end(); iter++) {
 
 				int pos1 = iter->first.find(".");
+				int pos2 = iter->first.find_last_of(".");
+				type = atoi(iter->first.substr(pos2 + 1, iter->first.size() - pos2).c_str());
 				if (res.count(iter->first.substr(0, pos1)) == 0) {
 					Val = Builder.CreateLoad(iter->second);
 					
-					res[iter->first.substr(0, pos1)] = Val;
+					//res[iter->first.substr(0, pos1)] = Val;
+					res[to_string(type) + " " + iter->first.substr(0, pos1) + " "] = Val;
 					//cout << "GB:\n";
 					//cout << iter->first;
 					//cout << "\n";
@@ -106,7 +123,7 @@ Value* StmtsAST::codegen()
 			}
 			
 			for (auto iter = res.begin(); iter != res.end(); iter++) {
-				writeChar(iter->first+":");
+				writeChar(iter->first);
 				Val = iter->second;
 				if (Val->getType()->isIntegerTy()) {
 					func = TheModule->getFunction("writeInt");

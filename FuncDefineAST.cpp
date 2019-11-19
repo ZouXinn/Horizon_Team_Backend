@@ -101,38 +101,14 @@ Value* FuncDefineAST::codegen() {
 		Params[pName] = Alloca;
 		Builder.CreateStore(Params[name], Params[pName]);
 	}
-	////冯文翰于11.12日 18：52添加
-	//BasicBlock* RetBB = BasicBlock::Create(TheContext, "RetBB", currentFun);
-	//currentRetBB = RetBB;
-	//Type* retType = FT->getReturnType();
-	//if (retType->isIntegerTy()) {
-	//	currentRetValue = ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0));
-	//}
-	//else if (retType->isDoubleTy()) {
-	//	currentRetValue = ConstantFP::get(TheContext, APFloat(0.0));
-	//}
-	//PHINode* PN = Builder.CreatePHI(Type::getDoubleTy(TheContext), 2, "rettmp");
+	
 
 	//liu start
 	if (Value* RetVal = stmtsAST->codegen()) {
 
 		//Builder.CreateRet(RetVal);
 
-		//冯文翰于11.11 0：02注释
-		/*Type* retType = FT->getReturnType();
-		if (retType->isIntegerTy()) {
-			Builder.CreateRet(ConstantInt::get(IntegerType::get(TheContext, 32), APInt(32, 0)));
-		}
-		else if (retType->isDoubleTy()) {
-			Builder.CreateRet(ConstantFP::get(TheContext, APFloat(0.0)));
-		}
-		else if (retType->isVoidTy()) {
-			Builder.CreateRetVoid();
-		}*/
-		/*Type* retType = FT->getReturnType();
-		if (retType->isVoidTy()) {
-			Builder.CreateRetVoid();
-		}*/
+		
 
 		//冯文翰于11.12日 19：03修改
 		//参考https://stackoverflow.com/questions/53632131/compiler-how-to-check-a-user-function-returns-properly
