@@ -318,6 +318,34 @@ extern "C" DLLEXPORT int readInt() {
 	int inputInt;
 	fscanf(stdin, "%d", &inputInt);//是否需要取消& ？
 	return inputInt;
+
+
+	//DWORD wLen = 0;
+
+	//DWORD rLen = 0;
+
+	//char szBuffer[BUF_SIZE] = { 0 };
+
+
+	////步骤4：读写管道
+
+	//while (1)
+
+	//{
+
+
+	//	//读取客户端数据
+
+	//	if (!ReadFile(h_Mypipe, szBuffer, BUF_SIZE, &rLen, NULL))
+
+	//		cout << "Read Failed..." << endl;
+
+	//	else
+	//		inputInt = atoi(szBuffer);
+	//		return inputInt;
+	//		/*cout << "服务器接收客户端数据：" << szBuffer << ", 共" << rLen << "byte" << endl;*/
+
+	//}
 }
 extern "C" DLLEXPORT double readDouble() {
 	double inputDouble;
@@ -348,12 +376,12 @@ extern "C" DLLEXPORT void writeDoubleNotBr(double d) {
 }
 extern "C" DLLEXPORT void intDivisorIsZero(int i,int line) {
 	if (i == 0) {
-		fprintf(stdout, "\nERROR\n@%d除0错误", line);
+		fprintf(stdout, "\n@%d\nERROR:除零错误\n", line);
 	}
 }
 extern "C" DLLEXPORT void doubleDivisorIsZero(double d, int line) {
 	if (abs(d-0)<0.000001) {
-		fprintf(stdout, "\nERROR\n@%d除0错误\n", line);
+		fprintf(stdout, "\n@%d\nERROR:除零错误\n", line);
 	}
 }
 
@@ -453,3 +481,6 @@ void writeChar(string s) {
 		Builder.CreateCall(func, Val);
 	}
 }
+
+//HANDLE h_Mypipe;
+//int BUF_SIZE = 4096;

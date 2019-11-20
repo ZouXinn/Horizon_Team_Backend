@@ -488,7 +488,7 @@ void MyParser::Parse()
 				ast = nullptr;
 				break;
 			case Token::Void:
-				ast = new TypeAST(zx::Type::VOID);
+				ast = new TypeAST(zx::Type::ZXVOID);
 				ast->setRow(row);
 				this->push(ast, action.aim);
 				ast = nullptr;
@@ -1017,7 +1017,7 @@ void MyParser::Parse()
 						}
 						else//非结构体
 						{
-							if (dTypeSpecify->type->type == zx::Type::VOID)
+							if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 							{
 								throw Exception(StaticSemaEx, dTypeSpecify->row, "不能定义void类型的变量");
 							}
@@ -1030,7 +1030,7 @@ void MyParser::Parse()
 						PointerTypeSpecifyAST* pTypeSpecify = (PointerTypeSpecifyAST*)typeSpecify;
 						DirectTypeSpecifyAST* dTypeSpecify = pTypeSpecify->directTypeSpecifyAST;
 						PointerAST* pointer = pTypeSpecify->pointerAST;
-						if (dTypeSpecify->type->type == zx::Type::VOID)
+						if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 						{
 							throw Exception(StaticSemaEx, dTypeSpecify->row, "不能定义void类型的指针变量");
 						}
@@ -1137,7 +1137,7 @@ void MyParser::Parse()
 						}
 						else//非结构体
 						{
-							if (dTypeSpecify->type->type == zx::Type::VOID)
+							if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 							{
 								throw Exception(StaticSemaEx, dTypeSpecify->row, "不能定义void类型的变量");
 							}
@@ -1150,7 +1150,7 @@ void MyParser::Parse()
 						PointerTypeSpecifyAST* pTypeSpecify = (PointerTypeSpecifyAST*)typeSpecify;
 						DirectTypeSpecifyAST* dTypeSpecify = pTypeSpecify->directTypeSpecifyAST;
 						PointerAST* pointer = pTypeSpecify->pointerAST;
-						if (dTypeSpecify->type->type == zx::Type::VOID)
+						if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 						{
 							throw Exception(StaticSemaEx, dTypeSpecify->row, "不能定义void类型的指针变量");
 						}
@@ -1365,7 +1365,7 @@ void MyParser::Parse()
 				{
 					DirectTypeSpecifyAST* dtypeSpecify = (DirectTypeSpecifyAST*)typeSpecify;
 					zx::Type type = dtypeSpecify->type->type;
-					if (type == zx::Type::VOID)
+					if (type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, typeSpecify->row, "不能定义void类型的变量");
 					}
@@ -1526,7 +1526,7 @@ void MyParser::Parse()
 				{
 					PointerTypeSpecifyAST* ptypeSpecify = (PointerTypeSpecifyAST*)typeSpecify;
 					DirectTypeSpecifyAST* dtypeSpecify = ptypeSpecify->directTypeSpecifyAST;
-					if (dtypeSpecify->type->type == zx::Type::VOID)
+					if (dtypeSpecify->type->type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, typeSpecify->row, "不能定义void类型的指针变量");
 					}
@@ -2228,7 +2228,7 @@ void MyParser::Parse()
 				if (type->son == 0)
 				{
 					DirectTypeSpecifyAST* dTypeSpecify = (DirectTypeSpecifyAST*)type;
-					if (dTypeSpecify->type->type == zx::Type::VOID)
+					if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, type->row, "不能定义void类型的变量");
 					}
@@ -2241,7 +2241,7 @@ void MyParser::Parse()
 				{
 					PointerTypeSpecifyAST* pTypeSpecify = (PointerTypeSpecifyAST*)type;
 					DirectTypeSpecifyAST* dTypeSpecify = pTypeSpecify->directTypeSpecifyAST;
-					if (dTypeSpecify->type->type == zx::Type::VOID)
+					if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, type->row, "不能定义void类型的指针变量");
 					}
@@ -2288,7 +2288,7 @@ void MyParser::Parse()
 				else
 				{
 					DirectTypeSpecifyAST* dTypeSpecify = (DirectTypeSpecifyAST*)type;
-					if (dTypeSpecify->type->type == zx::Type::VOID)
+					if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, type->row, "不能定义void类型的变量");
 					}
@@ -2386,7 +2386,7 @@ void MyParser::Parse()
 				else
 				{
 					DirectTypeSpecifyAST* dTypeSpecify = (DirectTypeSpecifyAST*)type;
-					if (dTypeSpecify->type->type == zx::Type::VOID)
+					if (dTypeSpecify->type->type == zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, type->row, "不能定义void类型的变量");
 					}
@@ -3289,7 +3289,7 @@ void MyParser::Parse()
 #ifdef STATIC
 				if (funcTypeAST != nullptr)
 				{
-					if (funcTypeAST->son == 1 || ((DirectTypeSpecifyAST*)funcTypeAST)->type->type != zx::Type::VOID)
+					if (funcTypeAST->son == 1 || ((DirectTypeSpecifyAST*)funcTypeAST)->type->type != zx::Type::ZXVOID)
 					{
 						throw Exception(StaticSemaEx, semi->row, "返回值与函数定义的类型不匹配");
 					}

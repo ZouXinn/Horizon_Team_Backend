@@ -126,7 +126,9 @@ Value* FuncCallStmtAST::codegen()
 		funIndex.PR = MyPR;
 		string MyFuncName = FuncNames[funIndex];
 		func = Funcs[MyFuncName];
-		Val = Builder.CreateCall(func, rparamsVec, "calltmp");
+		//对于void类型的函数，不能加入第三个参数作为IR中的助记符
+		//Val = Builder.CreateCall(func, rparamsVec, "calltmp");
+		Val = Builder.CreateCall(func, rparamsVec);
 	}
 	return Val;
 }

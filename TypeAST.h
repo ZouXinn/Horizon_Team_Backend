@@ -21,7 +21,7 @@ public:
 			return llvm::IntegerType::get(TheContext, 32);
 		case zx::Type::REAL:
 			return llvm::Type::getDoubleTy(TheContext);
-		case zx::Type::VOID:
+		case zx::Type::ZXVOID:
 			return llvm::Type::getVoidTy(TheContext);
 		case zx::Type::CHAR:
 			return llvm::Type::getInt8Ty(TheContext);

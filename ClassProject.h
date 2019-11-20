@@ -37,6 +37,7 @@
 
 #include "llvm/IR/ValueMap.h"
 #include "llvm/IR/DerivedTypes.h"
+//#include <Windows.h>
 
 using namespace std;
 
@@ -152,3 +153,9 @@ extern Function* CreateInterprterFunction();
 //extern void CreateWriteStr(int8_t d[]);
 
 extern void writeChar(string s);
+
+//extern HANDLE h_Mypipe;
+
+//extern int BUF_SIZE;
+
+//#define BUF_SIZE 4096

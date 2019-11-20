@@ -15,8 +15,8 @@ private:
 	bool isArray;
 	int arrayLength = 0;
 	std::string structName = "";//如果type是STRUCT，则存此struct的名称
-	zx::Type toType = zx::Type::VOID;//如果type是指针，则存指向的目标的类型
-	zx::Type finalToType = zx::Type::VOID;//
+	zx::Type toType = zx::Type::ZXVOID;//如果type是指针，则存指向的目标的类型
+	zx::Type finalToType = zx::Type::ZXVOID;//
 	std::string finalStructName = "";//如果finalToType是STRUCT，则存此struct的名称
 	int pointerNum = 0;
 public:

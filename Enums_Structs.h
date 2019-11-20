@@ -4,7 +4,7 @@ namespace zx {
 		INT,
 		REAL,
 		CHAR,
-		VOID,
+		ZXVOID,
 		STRUCT,
 		POINTER,
 		STRING

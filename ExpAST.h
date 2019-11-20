@@ -14,9 +14,9 @@ public:
 	ExpAST* left = nullptr;//单目运算符只用left
 	ExpAST* right = nullptr;
 
-	zx::Type expType = zx::Type::VOID;//此exp的变量类型，默认为VOID
+	zx::Type expType = zx::Type::ZXVOID;//此exp的变量类型，默认为VOID
 	int pointerNum = 0;//指针数
-	zx::Type finalToType = zx::Type::VOID;//最终指向的类型
+	zx::Type finalToType = zx::Type::ZXVOID;//最终指向的类型
 	string structName = "";//如果是结构体或者FinalToType为结构体，则structName表示结构体的名称
 	////////////结构体的考虑？
 

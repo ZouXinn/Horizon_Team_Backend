@@ -20,8 +20,8 @@ public:
 
 	int level = 0;
 	//静态语义检查 start
-	zx::Type varType = zx::Type::VOID;
-	zx::Type finalToType = zx::Type::VOID;//如果是指针，则表示最终指向的type
+	zx::Type varType = zx::Type::ZXVOID;
+	zx::Type finalToType = zx::Type::ZXVOID;//如果是指针，则表示最终指向的type
 	int pointerNum = 0;//如果是指针，表示指针个数
 	string structName = "";//如果类型是struct或者finalToType是struct，则表示struct的名字
 	bool isArray = false;
