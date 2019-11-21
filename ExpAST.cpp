@@ -536,11 +536,6 @@ Value* ExpAST::codegen() {
 		else if (varNameAST->type == 4) {// varName -> * exp   , 则可能是在左部
 
 		}
-		
-
-
-		/*Val->print(errs());
-		cout << "\n";*/
 		return Val;
 	case 4:
 		return this->funcCallStmtAST->codegen();
