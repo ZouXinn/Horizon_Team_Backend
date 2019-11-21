@@ -72,7 +72,7 @@ Value* FuncCallStmtAST::codegen()
 			}
 		}
 		else {
-			writeChar("\nWRITE:\n");
+			writeChar("\n@W\n");
 			if (GlobalVariable::classof(rparam)) {
 				if (((GlobalVariable*)rparam)->getValueType()->isIntegerTy()) {
 					func = TheModule->getFunction("writeInt");
