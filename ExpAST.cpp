@@ -107,8 +107,8 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateNot(LVar);
 			//Val->getType()->print(errs());  //i32
 			//cout << endl;
-			Val->print(errs());
-			std::cout << "\n";
+			//Val->print(errs());
+			//std::cout << "\n";
 			return Val;
 		case Op::MINUS:
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -117,8 +117,8 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateNeg(LVar);
 			//Val->getType()->print(errs()); //i32
 			//cout << endl;
-			Val->print(errs());
-			std::cout << "\n";
+			//Val->print(errs());
+			//std::cout << "\n";
 			return Val;
 		case Op::STAR:
 			/*Val = Builder.CreateNot(LVar, "Not tmp");
@@ -148,17 +148,17 @@ Value* ExpAST::codegen() {
 			//这里似乎不用加判断也可生成正常IR代码
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFAdd(LVar, RVar);
-			Val->print(errs());
-			std::cout << "\n";
+			//Val->print(errs());
+			//std::cout << "\n";
 			return Val;
 		case Op::MINUS:
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -177,17 +177,17 @@ Value* ExpAST::codegen() {
 			//这里似乎不用加判断也可生成正常IR代码
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFSub(LVar, RVar);
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		case Op::STAR:
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -206,13 +206,13 @@ Value* ExpAST::codegen() {
 			//这里似乎不用加判断也可生成正常IR代码
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 
 
@@ -220,8 +220,8 @@ Value* ExpAST::codegen() {
 			//由IEEE浮点数标准换算（即系统级程序设计上写的方法），可以算出该16进制数换算后就是正确结果
 			//具体换算已经写成了IEEEConvert项目
 			Val = Builder.CreateFMul(LVar, RVar, "multmp");
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		case Op::DIVIDE://如果两个都是int类型，也要转换吗？
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -265,26 +265,26 @@ Value* ExpAST::codegen() {
 			//这里似乎不用加判断也可生成正常IR代码
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 
 			Val = Builder.CreateFDiv(LVar, RVar);
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 
 			//对于乘法和除法，Val输出的errs()有时候不是十进制数而是16位16进制数
 			//由IEEE浮点数标准换算（即系统级程序设计上写的方法），可以算出该16进制数换算后就是正确结果
 			//具体换算已经写成了IEEEConvert项目
 			if (IntegerType::classof(LVar->getType()) && IntegerType::classof(RVar->getType())) {
 				Val = Builder.CreateFPToSI(Val, IntegerType::get(TheContext, 32));
-				Val->print(errs());
-				cout << "\n";
+				//Val->print(errs());
+				//cout << "\n";
 			}
 			return Val;
 		case Op::MORE:
@@ -304,18 +304,18 @@ Value* ExpAST::codegen() {
 			}
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateICmpSGT(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		case Op::MOREOREQ:
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -335,13 +335,13 @@ Value* ExpAST::codegen() {
 			}
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFCmpOGE(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
@@ -362,19 +362,19 @@ Value* ExpAST::codegen() {
 				//cout << "\n";
 				return Val;
 			}
-			LVar->getType()->print(errs());
-			cout << endl;
-			RVar->getType()->print(errs());
-			cout << endl;
+			//LVar->getType()->print(errs());
+			//cout << endl;
+			//RVar->getType()->print(errs());
+			//cout << endl;
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFCmpOLT(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
@@ -397,13 +397,13 @@ Value* ExpAST::codegen() {
 			}
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFCmpOLE(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
@@ -426,13 +426,13 @@ Value* ExpAST::codegen() {
 			}
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFCmpOEQ(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
@@ -455,13 +455,13 @@ Value* ExpAST::codegen() {
 			}
 			if (IntegerType::classof(LVar->getType())) {
 				LVar = Builder.CreateSIToFP(LVar, Type::getDoubleTy(TheContext));
-				LVar->print(errs());
-				cout << "\n";
+				//LVar->print(errs());
+				//cout << "\n";
 			}
 			if (IntegerType::classof(RVar->getType())) {
 				RVar = Builder.CreateSIToFP(RVar, Type::getDoubleTy(TheContext));
-				RVar->print(errs());
-				cout << "\n";
+				//RVar->print(errs());
+				//cout << "\n";
 			}
 			Val = Builder.CreateFCmpONE(LVar, RVar);
 			Val = Builder.CreateZExt(Val, IntegerType::get(TheContext, 32));
@@ -476,8 +476,8 @@ Value* ExpAST::codegen() {
 			Val = Builder.CreateAnd(LVar, RVar);
 			//cout << endl;
 			//Val->getType()->print(errs());//    Val->getType() == i32 (1位无符号整数)
-			Val->print(errs());
-			cout << "\n";
+			//Val->print(errs());
+			//cout << "\n";
 			return Val;
 		case Op::OR:
 			if (AllocaInst::classof(LVar) || GlobalVariable::classof(LVar)) {
@@ -509,7 +509,7 @@ Value* ExpAST::codegen() {
 			else {//wrong
 
 			}
-			Val->print(errs());
+			//Val->print(errs());
 		}
 		else if(varNameAST->type == 0){//varName->identifier  是否也应该返回AllocaInst* ？
 			//allo = NamedValues[varNameAST->codegenStr()];

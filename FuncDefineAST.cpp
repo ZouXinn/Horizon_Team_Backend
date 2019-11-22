@@ -139,7 +139,7 @@ Value* FuncDefineAST::codegen() {
 		currentFun = Builder.GetInsertBlock()->getParent();
 
 		verifyFunction(*currentFun);
-		currentFun->print(errs());
+		//currentFun->print(errs());
 		currentFun = NULL;
 		return nullptr;
 	}

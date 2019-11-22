@@ -456,10 +456,10 @@ void CreateWriteStr(string str) {
 	Value* arrVal = Builder.CreateStore(constantArr, strArr);
 
 	//»ñÈ¡ElementPtr
-	arrVal->print(errs());
+	//arrVal->print(errs());
 
 	Type* type = arrType->getElementType();
-	type->print(errs());
+	//type->print(errs());
 
 	GetElementPtrInst* i = GetElementPtrInst::Create(type, strArr, idxs);
 

@@ -129,13 +129,13 @@ Value* VarDecAST::codegen() {
 				else {
 					gv = new GlobalVariable(*TheModule, vectorType, false, GlobalValue::PrivateLinkage, constantVector, TableVarName);
 				}
-				gv->print(errs());
-				cout << endl;
+				//gv->print(errs());
+				//cout << endl;
 				GV[TableVarName] = gv;
 				if (noneConstIndex.size() > 0) {//不会出现
 					Value* vectorValue = Builder.CreateLoad(gv);
 					//vectorValue = Builder.CreateLoad(gv);
-					vectorValue->print(errs()); cout << endl;
+					//vectorValue->print(errs()); cout << endl;
 					for (int i = 0; i < noneConstIndex.size(); i++) {
 						Value* noneConstValue = noneConstVector[i];
 						if (AllocaInst::classof(noneConstValue) || GlobalVariable::classof(noneConstValue)) {
@@ -146,7 +146,7 @@ Value* VarDecAST::codegen() {
 							noneConstValue = Builder.CreateSIToFP(noneConstValue, Type::getDoubleTy(TheContext));
 						}
 						vectorValue = Builder.CreateInsertElement(vectorValue, noneConstValue, (uint64_t)index);
-						vectorValue->print(errs()); cout << endl;
+						//vectorValue->print(errs()); cout << endl;
 					}
 					Builder.CreateStore(vectorValue, gv);
 				}
@@ -204,8 +204,8 @@ Value* VarDecAST::codegen() {
 					else {
 						gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)defaultVal, TableVarName);
 					}
-					gv->print(errs());
-					cout << endl;
+					//gv->print(errs());
+					//cout << endl;
 					GV[TableVarName] = gv;
 				}
 				else {
@@ -219,7 +219,7 @@ Value* VarDecAST::codegen() {
 					}
 					NamedValues[TableVarName] = c;
 					Value* g = Builder.CreateStore(defaultVal, c);
-					g->print(errs());
+					//g->print(errs());
 				}
 			}
 			else {
@@ -251,8 +251,8 @@ Value* VarDecAST::codegen() {
 						else {
 							gv = new GlobalVariable(*TheModule, type, false, GlobalValue::PrivateLinkage, (Constant*)Val, TableVarName);
 						}
-						gv->print(errs());
-						cout << endl;
+						//gv->print(errs());
+						//cout << endl;
 						GV[TableVarName] = gv;
 					}
 				}

@@ -29,6 +29,9 @@ Value* ReturnStmtAST::codegen()
 			value = Builder.CreateLoad(value);
 		}
 		//Builder.CreateCleanupRet(value);//???
+		if (value->getType()->isIntegerTy() && currentFun->getReturnType()->isDoubleTy()) {
+			value = Builder.CreateSIToFP(value, Type::getDoubleTy(TheContext));
+		}
 		Builder.CreateRet(value);
 		
 	}

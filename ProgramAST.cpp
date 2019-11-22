@@ -72,8 +72,8 @@ void ProgramAST::RunJIT()
 
 
 	int (*FP)() = (int (*)())(intptr_t)cantFail(ExprSymbol.getAddress());
-	fprintf(stdout, "main exited with code %d\n", FP());
-
+	//fprintf(stdout, "main exited with code %d\n", FP());
+	FP();
 	// Delete the anonymous expression module from the JIT.
 	TheJIT->removeModule(H);
 }
